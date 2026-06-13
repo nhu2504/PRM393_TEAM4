@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'movie_showtimes_screen.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   const MovieDetailScreen({super.key});
@@ -65,7 +66,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               ),
               child: ElevatedButton(
                 onPressed: () {
-                  // Bạn có thể xử lý chuyển hướng sang Tab Lịch chiếu từ đây nếu muốn
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const MovieShowtimesScreen()));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,

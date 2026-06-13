@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../models/movie_model.dart';
+import '../controllers/booking_controller.dart';
+import '../screens/seat_selection_screen.dart';
 
 class MovieShowtimesScreen extends StatefulWidget {
   const MovieShowtimesScreen({super.key});
@@ -301,7 +304,7 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
             itemCount: cinemas.length,
             itemBuilder: (context, cIndex) {
               final cinema = cinemas[cIndex];
-              return _buildCinemaShowtimes(cinema);
+              return _buildCinemaShowtimes(movie, cinema);
             },
           ),
         ],
@@ -310,7 +313,7 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
   }
 
   // Widget hiển thị suất chiếu của từng rạp
-  Widget _buildCinemaShowtimes(Map<String, dynamic> cinema) {
+  Widget _buildCinemaShowtimes(Map<String, dynamic> movie, Map<String, dynamic> cinema) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -349,16 +352,35 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
                     spacing: 8,
                     runSpacing: 8,
                     children: (type['times'] as List<String>).map((time) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: Colors.grey.shade200),
-                        ),
-                        child: Text(
-                          time,
-                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87),
+                      return GestureDetector(
+                        onTap: () {
+                          final movieObj = Movie(
+                            id: movie['title'], 
+                            title: movie['title'],
+                            image: 'https://via.placeholder.com/100x140', 
+                            genre: movie['genre'],
+                            categoryId: '1',
+                            status: 'now_showing'
+                          );
+                          final controller = BookingController(
+                            movie: movieObj,
+                            cinemaName: cinema['name'],
+                            showDate: '${days[selectedDayIndex]['weekday']} ${days[selectedDayIndex]['day']}',
+                            showTime: time,
+                          );
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => SeatSelectionScreen(controller: controller)));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: Colors.grey.shade200),
+                          ),
+                          child: Text(
+                            time,
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87),
+                          ),
                         ),
                       );
                     }).toList(),

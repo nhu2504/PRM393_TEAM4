@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 class MyTicketsScreen extends StatefulWidget {
   const MyTicketsScreen({Key? key}) : super(key: key);
 
-  @override
-  State<MyTicketsScreen> createState() => _MyTicketsScreenState();
-}
-
-class _MyTicketsScreenState extends State<MyTicketsScreen> {
-  final List<Map<String, dynamic>> tickets = [
+  static final List<Map<String, dynamic>> globalTickets = [
     {
       'title': 'Dune: Hành Tinh Cát 2',
       'theater': 'CGV Vincom Center',
@@ -58,6 +53,13 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
       'status': 'past'
     }
   ];
+
+  @override
+  State<MyTicketsScreen> createState() => _MyTicketsScreenState();
+}
+
+class _MyTicketsScreenState extends State<MyTicketsScreen> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +138,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
   }
 
   Widget _buildTicketList(String status) {
-    final filteredTickets = tickets.where((t) => t['status'] == status).toList();
+    final filteredTickets = MyTicketsScreen.globalTickets.where((t) => t['status'] == status).toList();
 
     if (filteredTickets.isEmpty) {
       return const Center(child: Text('Không có vé nào.'));
