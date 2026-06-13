@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import '../controllers/main_controller.dart';
 import 'movie_screen.dart';
 import 'cinema_screen.dart';
-import 'food_screen.dart';
-import 'promotions_screen.dart';
-import 'account_screen.dart';
 import 'movie_showtimes_screen.dart';
+import 'account_screen.dart';
+import '../screens/food_combo_screen.dart';
+import '../screens/vouchers_screen.dart';
+import '../screens/my_tickets_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,8 +23,9 @@ class _MainScreenState extends State<MainScreen> {
     MovieScreen(),
     MovieShowtimesScreen(), // Thêm lịch chiếu
     CinemaScreen(),
-    FoodScreen(),
-    // PromotionsScreen(),
+    FoodComboScreen(),
+    VouchersScreen(),
+    MyTicketsScreen(),
     AccountScreen(),
   ];
 
@@ -77,11 +79,16 @@ class _MainScreenState extends State<MainScreen> {
             selectedIcon: Icon(Icons.fastfood),
             label: 'Bắp nước',
           ),
-          // NavigationDestination(
-          //   icon: Icon(Icons.local_offer_outlined),
-          //   selectedIcon: Icon(Icons.local_offer),
-          //   label: 'Khuyến mãi',
-          // ),
+          NavigationDestination(
+            icon: Icon(Icons.local_offer_outlined),
+            selectedIcon: Icon(Icons.local_offer),
+            label: 'Khuyến mãi',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.confirmation_num_outlined),
+            selectedIcon: Icon(Icons.confirmation_num),
+            label: 'Vé của tôi',
+          ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
