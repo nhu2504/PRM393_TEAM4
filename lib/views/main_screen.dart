@@ -5,6 +5,7 @@ import 'cinema_screen.dart';
 import 'food_screen.dart';
 import 'promotions_screen.dart';
 import 'account_screen.dart';
+import 'movie_showtimes_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,6 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   // Danh sách màn hình tương ứng với từng tab
   final List<Widget> _screens = const [
     MovieScreen(),
+    MovieShowtimesScreen(), // Thêm lịch chiếu
     CinemaScreen(),
     FoodScreen(),
     // PromotionsScreen(),
@@ -58,6 +60,12 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.movie_outlined),
             selectedIcon: Icon(Icons.movie),
             label: 'Chọn phim',
+          ),
+          // 2. Thêm một nút bấm  hiển thị "Lịch chiếu" lên thanh Menu dưới cùng
+          NavigationDestination(
+            icon: Icon(Icons.calendar_month_outlined),
+            selectedIcon: Icon(Icons.calendar_month),
+            label: 'Lịch chiếu',
           ),
           NavigationDestination(
             icon: Icon(Icons.theaters_outlined),
