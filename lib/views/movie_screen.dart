@@ -10,10 +10,10 @@ class MovieScreen extends StatefulWidget {
   const MovieScreen({super.key});
 
   @override
-  State<MovieScreen> createState() => _movieScreenState();
+  State<MovieScreen> createState() => _MovieScreenState();
 }
 
-class _movieScreenState extends State<MovieScreen> {
+class _MovieScreenState extends State<MovieScreen> {
   late final MovieController _controller;
 
   @override
@@ -52,22 +52,58 @@ class _movieScreenState extends State<MovieScreen> {
           ),
         ],
       ),
-      body: _controller.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-        onRefresh: _controller.fetchMovieData,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SearchBarWidget(onChanged: _controller.onSearchChanged),
-              const SizedBox(height: 16),
-              BannerSliderWidget(banners: _controller.banners),
-              const SizedBox(height: 20),
-              CategoryListWidget(categories: _controller.categories),
-              const SizedBox(height: 20),
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_controller.isLoading && _controller.categories.length <= 1) {
+      // Chỉ hiện loading toàn màn hình ở lần load đầu tiên
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_controller.errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_controller.errorMessage!, textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: _controller.fetchMovieData,
+              child: const Text('Thử lại'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _controller.fetchMovieData,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SearchBarWidget(onChanged: _controller.onSearchChanged),
+            const SizedBox(height: 16),
+            BannerSliderWidget(banners: _controller.banners),
+            const SizedBox(height: 20),
+            CategoryListWidget(
+              categories: _controller.categories,
+              selectedCategoryId: _controller.selectedCategoryId,
+              onSelected: _controller.onCategorySelected,
+            ),
+            const SizedBox(height: 20),
+
+            // Hiện loading nhỏ khi đang chuyển thể loại
+            if (_controller.isLoading)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 40),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else ...[
               SectionTitleWidget(
                 title: 'Phim đang chiếu',
                 onSeeAll: _controller.onSeeAllNowShowing,
@@ -87,7 +123,7 @@ class _movieScreenState extends State<MovieScreen> {
               ),
               const SizedBox(height: 20),
             ],
-          ),
+          ],
         ),
       ),
     );

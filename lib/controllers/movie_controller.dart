@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import '../models/movie_model.dart';
+import '../models/category_model.dart';
+import '../services/api_service.dart';
 
 class MovieController extends ChangeNotifier {
   bool isLoading = false;
+  String? errorMessage;
 
   List<BannerItem> banners = [];
-  List<String> categories = [];
+
+  // "Tất cả" luôn có sẵn, id = 'all'
+  List<CategoryModel> categories = [
+    CategoryModel(id: 'all', name: 'Tất cả'),
+  ];
+  String selectedCategoryId = 'all';
+
   List<Movie> nowShowing = [];
   List<Movie> comingSoon = [];
 
@@ -15,52 +24,66 @@ class MovieController extends ChangeNotifier {
     fetchMovieData();
   }
 
+  /// Load toàn bộ dữ liệu ban đầu: banner, thể loại, phim
   Future<void> fetchMovieData() async {
     isLoading = true;
+    errorMessage = null;
     notifyListeners();
 
-    // TODO: Thay bằng gọi API thực tế
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      final fetchedBanners = await ApiService.fetchBanners();
+      final fetchedCategories = await ApiService.fetchCategories();
+      final movies = await ApiService.fetchMovies(categoryId: selectedCategoryId);
 
-    banners = [
-      BannerItem(image: 'https://via.placeholder.com/400x200', title: 'Avengers: Endgame'),
-      BannerItem(image: 'https://via.placeholder.com/400x200', title: 'Spider-Man'),
-      BannerItem(image: 'https://via.placeholder.com/400x200', title: 'Doctor Strange'),
-    ];
-
-    categories = ['Hành động', 'Hài', 'Kinh dị', 'Tình cảm', 'Hoạt hình'];
-
-    nowShowing = [
-      Movie(id: '1', image: 'https://via.placeholder.com/150x220', title: 'Avengers', genre: 'Hành động'),
-      Movie(id: '2', image: 'https://via.placeholder.com/150x220', title: 'Joker', genre: 'Tâm lý'),
-      Movie(id: '3', image: 'https://via.placeholder.com/150x220', title: 'Frozen 2', genre: 'Hoạt hình'),
-    ];
-
-    comingSoon = [
-      Movie(id: '4', image: 'https://via.placeholder.com/150x220', title: 'Dune 2', genre: 'Khoa học viễn tưởng'),
-      Movie(id: '5', image: 'https://via.placeholder.com/150x220', title: 'Fast X', genre: 'Hành động'),
-    ];
+      banners = fetchedBanners;
+      categories = [
+        CategoryModel(id: 'all', name: 'Tất cả'),
+        ...fetchedCategories,
+      ];
+      _applyMovies(movies);
+    } catch (e) {
+      errorMessage = 'Không thể tải dữ liệu: $e';
+    }
 
     isLoading = false;
     notifyListeners();
   }
 
+  /// Gọi khi người dùng chọn thể loại -> gọi lại API lấy phim theo thể loại
+  Future<void> onCategorySelected(String categoryId) async {
+    if (selectedCategoryId == categoryId) return;
+
+    selectedCategoryId = categoryId;
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      final movies = await ApiService.fetchMovies(categoryId: categoryId);
+      _applyMovies(movies);
+    } catch (e) {
+      errorMessage = 'Không thể tải phim: $e';
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  /// Tách phim thành 2 danh sách "đang chiếu" / "sắp chiếu"
+  void _applyMovies(List<Movie> movies) {
+    nowShowing = movies.where((m) => m.status == 'now_showing').toList();
+    comingSoon = movies.where((m) => m.status == 'coming_soon').toList();
+  }
+
   void onSearchChanged(String value) {
     searchKeyword = value;
     notifyListeners();
-    // TODO: gọi API tìm kiếm hoặc filter danh sách phim
   }
 
   void onMovieTap(Movie movie) {
-    // TODO: điều hướng sang màn hình chi tiết phim
     debugPrint('Tapped movie: ${movie.title}');
   }
 
-  void onSeeAllNowShowing() {
-    // TODO: điều hướng sang danh sách đầy đủ "Phim đang chiếu"
-  }
-
-  void onSeeAllComingSoon() {
-    // TODO: điều hướng sang danh sách đầy đủ "Phim sắp chiếu"
-  }
+  void onSeeAllNowShowing() {}
+  void onSeeAllComingSoon() {}
 }
