@@ -7,6 +7,7 @@ import 'widgets/section_title_widget.dart';
 import 'widgets/movie_list_widget.dart';
 import 'search_screen.dart';
 import 'movie_detail_screen.dart';
+import 'movie_leaderboard_screen.dart';
 
 class MovieScreen extends StatefulWidget {
   const MovieScreen({super.key});
@@ -48,6 +49,18 @@ class _MovieScreenState extends State<MovieScreen> {
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         actions: [
+          // --- ĐÃ ĐƯỢC THÊM LỆNH NAVIGATOR VÀO ĐÂY ---
+          IconButton(
+            icon: const Icon(Icons.leaderboard, color: Colors.red),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MovieLeaderboardScreen(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.notifications_none, color: Colors.black),
             onPressed: () {},
