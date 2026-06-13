@@ -1,40 +1,46 @@
-import 'package:flutter/gestures.dart';
+// import 'package:flutter/material.dart';
+// import 'screens/login_screen.dart';
+//
+// void main() {
+//   runApp(const PopCornGoApp());
+// }
+//
+// class PopCornGoApp extends StatelessWidget {
+//   const PopCornGoApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: LoginScreen(),
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
-import 'views/main_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/register_screen.dart';
+import 'screens/rate_experience_screen.dart';
 
 void main() {
-  runApp(const MovieTicketApp());
+  runApp(const PopCornGoApp());
 }
 
-class MovieTicketApp extends StatelessWidget {
-  const MovieTicketApp({super.key});
+class PopCornGoApp extends StatelessWidget {
+  const PopCornGoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Đặt vé xem phim',
       debugShowCheckedModeBanner: false,
-      scrollBehavior: AppScrollBehavior(),
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        scaffoldBackgroundColor: Colors.grey[100],
-        fontFamily: 'Roboto',
-        useMaterial3: true,
-      ),
-      home: const MainScreen(),
+
+      initialRoute: '/login',
+
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/rate': (context) => const RateExperienceScreen(),
+        
+      },
     );
   }
-}
-
-/// Custom ScrollBehavior cho phép kéo bằng chuột/trackpad
-/// (mặc định Flutter chỉ hỗ trợ kéo bằng touch/stylus)
-class AppScrollBehavior extends MaterialScrollBehavior {
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-    PointerDeviceKind.stylus,
-    PointerDeviceKind.invertedStylus,
-    PointerDeviceKind.trackpad,
-  };
 }

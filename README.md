@@ -1,4 +1,4 @@
-# prm_project
+# project_prm
 
 A new Flutter project.
 
