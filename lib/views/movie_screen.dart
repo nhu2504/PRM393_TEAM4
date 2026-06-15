@@ -124,7 +124,7 @@ class _MovieScreenState extends State<MovieScreen> {
             else ...[
               SectionTitleWidget(
                 title: 'Phim đang chiếu',
-                onSeeAll: _controller.onSeeAllNowShowing,
+                onSeeAll: () => _controller.onSeeAllNowShowing(context),
               ),
               MovieListWidget(
                 movies: _controller.nowShowing,
@@ -133,7 +133,7 @@ class _MovieScreenState extends State<MovieScreen> {
               const SizedBox(height: 20),
               SectionTitleWidget(
                 title: 'Phim sắp chiếu',
-                onSeeAll: _controller.onSeeAllComingSoon,
+                onSeeAll: () => _controller.onSeeAllComingSoon(context),
               ),
               // --- SỬA ĐOẠN NÀY: CLICK VÀO PHIM ĐANG CHIẾU ĐỂ XEM CHI TIẾT ---
               MovieListWidget(
