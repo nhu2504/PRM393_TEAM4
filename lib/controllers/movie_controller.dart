@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/movie_model.dart';
 import '../models/category_model.dart';
 import '../services/api_service.dart';
-
+import '../views/movie_list_screen.dart';
 class MovieController extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
@@ -82,8 +82,44 @@ class MovieController extends ChangeNotifier {
 
   void onMovieTap(Movie movie) {
     debugPrint('Tapped movie: ${movie.title}');
+    // TODO: điều hướng sang trang chi tiết phim (nếu cần)
   }
 
-  void onSeeAllNowShowing() {}
-  void onSeeAllComingSoon() {}
+  void onMovieDetailTap(BuildContext context, Movie movie) {
+    // TODO: điều hướng sang trang chi tiết phim
+    debugPrint('Xem chi tiết: ${movie.title}');
+  }
+
+  void onMovieBookTap(BuildContext context, Movie movie) {
+    // TODO: điều hướng sang trang đặt vé
+    debugPrint('Đặt vé: ${movie.title}');
+  }
+
+  void onSeeAllNowShowing(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieListScreen(
+          title: 'Phim đang chiếu',
+          movies: nowShowing,
+          onDetailTap: (movie) => onMovieDetailTap(context, movie),
+          onBookTap: (movie) => onMovieBookTap(context, movie),
+        ),
+      ),
+    );
+  }
+
+  void onSeeAllComingSoon(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieListScreen(
+          title: 'Phim sắp chiếu',
+          movies: comingSoon,
+          onDetailTap: (movie) => onMovieDetailTap(context, movie),
+          // không truyền onBookTap vì phim sắp chiếu không có nút "Đặt vé"
+        ),
+      ),
+    );
+  }
 }

@@ -24,6 +24,9 @@ class ApiService {
       genre: 'Hành động',
       categoryId: '1',
       status: 'now_showing',
+      durationMinutes: 142,
+      releaseDate: '15/05/2026',
+      description: 'Biệt đội siêu anh hùng hợp sức chống lại kẻ thù đe dọa cả vũ trụ.',
     ),
     Movie(
       id: '2',
@@ -32,6 +35,9 @@ class ApiService {
       genre: 'Hài',
       categoryId: '2',
       status: 'now_showing',
+      durationMinutes: 120,
+      releaseDate: '01/06/2026',
+      description: 'Câu chuyện hài hước về những tình huống dở khóc dở cười trong gia đình.',
     ),
     Movie(
       id: '3',
@@ -40,6 +46,9 @@ class ApiService {
       genre: 'Kinh dị',
       categoryId: '3',
       status: 'now_showing',
+      durationMinutes: 110,
+      releaseDate: '20/05/2026',
+      description: 'Bộ phim kinh dị dựa trên hồ sơ điều tra các hiện tượng siêu nhiên.',
     ),
     Movie(
       id: '4',
@@ -48,6 +57,9 @@ class ApiService {
       genre: 'Tình cảm',
       categoryId: '4',
       status: 'now_showing',
+      durationMinutes: 195,
+      releaseDate: '10/06/2026',
+      description: 'Câu chuyện tình yêu vượt thời gian trên chuyến tàu định mệnh.',
     ),
     Movie(
       id: '5',
@@ -56,6 +68,9 @@ class ApiService {
       genre: 'Hoạt hình',
       categoryId: '5',
       status: 'now_showing',
+      durationMinutes: 103,
+      releaseDate: '05/06/2026',
+      description: 'Hành trình khám phá nguồn gốc sức mạnh của Elsa và Anna.',
     ),
     Movie(
       id: '6',
@@ -64,6 +79,9 @@ class ApiService {
       genre: 'Hành động',
       categoryId: '1',
       status: 'coming_soon',
+      durationMinutes: 166,
+      releaseDate: '25/07/2026',
+      description: 'Cuộc chiến giành quyền kiểm soát hành tinh sa mạc Arrakis tiếp diễn.',
     ),
     Movie(
       id: '7',
@@ -72,6 +90,9 @@ class ApiService {
       genre: 'Hành động',
       categoryId: '1',
       status: 'coming_soon',
+      durationMinutes: 141,
+      releaseDate: '15/08/2026',
+      description: 'Đội đua tốc độ đối mặt với kẻ thù nguy hiểm nhất từ trước đến nay.',
     ),
     Movie(
       id: '8',
@@ -80,8 +101,12 @@ class ApiService {
       genre: 'Kinh dị',
       categoryId: '3',
       status: 'coming_soon',
+      durationMinutes: 99,
+      releaseDate: '01/09/2026',
+      description: 'Con búp bê bị ám lại tiếp tục gieo rắc nỗi kinh hoàng.',
     ),
   ];
+
 
   static final List<BannerItem> _mockBanners = [
     BannerItem(image: 'https://picsum.photos/seed/banner1/400/200', title: 'Avengers: Endgame'),
