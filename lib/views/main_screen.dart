@@ -5,6 +5,13 @@ import 'cinema_screen.dart';
 import 'food_screen.dart';
 import 'promotions_screen.dart';
 import 'account_screen.dart';
+<<<<<<< Updated upstream
+=======
+import '../screens/food_combo_screen.dart';
+import '../screens/vouchers_screen.dart';
+import '../screens/my_tickets_screen.dart';
+import '../controllers/cinema_controller.dart';
+>>>>>>> Stashed changes
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,6 +26,10 @@ class _MainScreenState extends State<MainScreen> {
   // Danh sách màn hình tương ứng với từng tab
   final List<Widget> _screens = const [
     MovieScreen(),
+<<<<<<< Updated upstream
+=======
+    MovieShowtimesScreen(),
+>>>>>>> Stashed changes
     CinemaScreen(),
     FoodScreen(),
     // PromotionsScreen(),

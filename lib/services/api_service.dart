@@ -1,6 +1,6 @@
 import '../models/movie_model.dart';
 import '../models/category_model.dart';
-
+import '../models/cinema_model.dart';
 /// MOCK API SERVICE
 /// Giả lập việc gọi API/DB bằng dữ liệu cứng + delay.
 /// Sau này khi có backend thật, chỉ cần thay nội dung 2 hàm dưới đây
@@ -138,4 +138,77 @@ class ApiService {
     }
     return _mockMovies.where((m) => m.categoryId == categoryId).toList();
   }
+
+  static final List<CinemaModel> _mockCinemas = [
+    CinemaModel(
+      id: '1',
+      name: 'CGV Vincom Bà Triệu',
+      address: '191 Bà Triệu, Hai Bà Trưng, Hà Nội',
+      image: 'https://picsum.photos/seed/cinema1/300/200',
+      city: 'Hà Nội',
+      brand: 'CGV',
+      latitude: 21.0095,
+      longitude: 105.8470,
+    ),
+    CinemaModel(
+      id: '2',
+      name: 'Lotte Cinema Landmark 81',
+      address: '720A Điện Biên Phủ, Bình Thạnh, TP.HCM',
+      image: 'https://picsum.photos/seed/cinema2/300/200',
+      city: 'TP. Hồ Chí Minh',
+      brand: 'Lotte Cinema',
+      latitude: 10.7951,
+      longitude: 106.7218,
+    ),
+    CinemaModel(
+      id: '3',
+      name: 'BHD Star Phạm Ngọc Thạch',
+      address: '6 Phạm Ngọc Thạch, Đống Đa, Hà Nội',
+      image: 'https://picsum.photos/seed/cinema3/300/200',
+      city: 'Hà Nội',
+      brand: 'BHD Star',
+      latitude: 21.0124,
+      longitude: 105.8252,
+    ),
+    CinemaModel(
+      id: '4',
+      name: 'Galaxy Nguyễn Du',
+      address: '116 Nguyễn Du, Quận 1, TP.HCM',
+      image: 'https://picsum.photos/seed/cinema4/300/200',
+      city: 'TP. Hồ Chí Minh',
+      brand: 'Galaxy Cinema',
+      latitude: 10.7762,
+      longitude: 106.6917,
+    ),
+    CinemaModel(
+      id: '5',
+      name: 'CGV Vĩnh Trung Plaza',
+      address: '255-257 Hùng Vương, Thanh Khê, Đà Nẵng',
+      image: 'https://picsum.photos/seed/cinema5/300/200',
+      city: 'Đà Nẵng',
+      brand: 'CGV',
+      latitude: 16.0678,
+      longitude: 108.2099,
+    ),
+  ];
+
+  /// Lấy danh sách thương hiệu rạp (duy nhất, không trùng)
+  static Future<List<String>> fetchBrands() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    return _mockCinemas.map((c) => c.brand).toSet().toList();
+  }
+
+  /// Lấy danh sách rạp, có thể filter theo thành phố và/hoặc brand
+  static Future<List<CinemaModel>> fetchCinemas({String? city, String? brand}) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    return _mockCinemas.where((c) {
+      final matchCity = (city == null || city == 'all') || c.city == city;
+      final matchBrand = (brand == null || brand == 'all') || c.brand == brand;
+      return matchCity && matchBrand;
+    }).toList();
+  }
+
+// fetchShowtimesByCinema giữ nguyên như cũ
+
 }
