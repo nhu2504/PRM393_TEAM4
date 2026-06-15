@@ -7,6 +7,7 @@ import 'account_screen.dart';
 import '../screens/food_combo_screen.dart';
 import '../screens/vouchers_screen.dart';
 import '../screens/my_tickets_screen.dart';
+import '../controllers/cinema_controller.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
