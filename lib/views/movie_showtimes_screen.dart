@@ -355,12 +355,15 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
                       return GestureDetector(
                         onTap: () {
                           final movieObj = Movie(
-                            id: movie['title'], 
+                            id: movie['id'].toString(),
                             title: movie['title'],
-                            image: 'https://via.placeholder.com/100x140', 
+                            image: movie['image'] ?? 'https://via.placeholder.com/100x140',
                             genre: movie['genre'],
-                            categoryId: '1',
-                            status: 'now_showing'
+                            categoryId: movie['categoryId'].toString(),
+                            status: movie['status'],
+                            durationMinutes: movie['durationMinutes'] ?? 0,
+                            releaseDate: movie['releaseDate'] ?? '',
+                            description: movie['description'] ?? '',
                           );
                           final controller = BookingController(
                             movie: movieObj,
