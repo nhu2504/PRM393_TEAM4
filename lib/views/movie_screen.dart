@@ -5,8 +5,6 @@ import 'widgets/banner_slider_widget.dart';
 import 'widgets/category_list_widget.dart';
 import 'widgets/section_title_widget.dart';
 import 'widgets/movie_list_widget.dart';
-import 'search_screen.dart';
-import 'movie_detail_screen.dart';
 
 class MovieScreen extends StatefulWidget {
   const MovieScreen({super.key});
@@ -88,23 +86,7 @@ class _MovieScreenState extends State<MovieScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- ĐOẠN ĐÃ ĐƯỢC SỬA ĐỂ BẤM VÀO LÀ CHUYỂN TRANG ---
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SearchScreen(),
-                    settings: const RouteSettings(name: '/search'),
-                  ),
-                );
-              },
-              child: AbsorbPointer(
-                child: SearchBarWidget(onChanged: (_) {}),
-              ),
-            ),
-            // --------------------------------------------------
-
+            SearchBarWidget(onChanged: _controller.onSearchChanged),
             const SizedBox(height: 16),
             BannerSliderWidget(banners: _controller.banners),
             const SizedBox(height: 20),
@@ -135,34 +117,9 @@ class _MovieScreenState extends State<MovieScreen> {
                 title: 'Phim sắp chiếu',
                 onSeeAll: () => _controller.onSeeAllComingSoon(context),
               ),
-              // --- SỬA ĐOẠN NÀY: CLICK VÀO PHIM ĐANG CHIẾU ĐỂ XEM CHI TIẾT ---
-              MovieListWidget(
-                movies: _controller.nowShowing,
-                onTap: (movie) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MovieDetailScreen(),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              SectionTitleWidget(
-                title: 'Phim sắp chiếu',
-                onSeeAll: _controller.onSeeAllComingSoon,
-              ),
-              // --- SỬA ĐOẠN NÀY: CLICK VÀO PHIM SẮP CHIẾU ĐỂ XEM CHI TIẾT ---
               MovieListWidget(
                 movies: _controller.comingSoon,
-                onTap: (movie) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MovieDetailScreen(),
-                    ),
-                  );
-                },
+                onTap: _controller.onMovieTap,
               ),
               const SizedBox(height: 20),
             ],
