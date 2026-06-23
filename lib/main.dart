@@ -1,22 +1,38 @@
-import 'package:flutter/gestures.dart';
+// import 'package:flutter/material.dart';
+// import 'screens/login_screen.dart';
+//
+// void main() {
+//   runApp(const PopCornGoApp());
+// }
+//
+// class PopCornGoApp extends StatelessWidget {
+//   const PopCornGoApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: LoginScreen(),
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
-
-import 'views/main_screen.dart';
-import 'screens/ticket_detail_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/register_screen.dart';
+import 'screens/rate_experience_screen.dart';
 
 void main() {
-  runApp(const MovieTicketApp());
+  runApp(const PopCornGoApp());
 }
 
-class MovieTicketApp extends StatelessWidget {
-  const MovieTicketApp({super.key});
+class PopCornGoApp extends StatelessWidget {
+  const PopCornGoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Đặt vé xem phim',
       debugShowCheckedModeBanner: false,
-
+   
       // Giữ ScrollBehavior của bạn kia
       scrollBehavior: AppScrollBehavior(),
 
@@ -34,6 +50,9 @@ class MovieTicketApp extends StatelessWidget {
       routes: {
         '/': (context) => const MainScreen(),
         '/ticket_detail': (context) => const TicketDetailScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/rate': (context) => const RateExperienceScreen(),
       },
     );
   }
