@@ -32,15 +32,40 @@ class PopCornGoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+   
+      // Giữ ScrollBehavior của bạn kia
+      scrollBehavior: AppScrollBehavior(),
 
-      initialRoute: '/login',
+      // Giữ Theme của bạn kia
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        scaffoldBackgroundColor: Colors.grey[100],
+        fontFamily: 'Roboto',
+        useMaterial3: true,
+      ),
+
+      // Giữ Route của bạn
+      initialRoute: '/',
 
       routes: {
+        '/': (context) => const MainScreen(),
+        '/ticket_detail': (context) => const TicketDetailScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/rate': (context) => const RateExperienceScreen(),
-        
       },
     );
   }
+}
+
+/// Cho phép kéo bằng chuột, touchpad, bút cảm ứng,...
+class AppScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.stylus,
+    PointerDeviceKind.invertedStylus,
+    PointerDeviceKind.trackpad,
+  };
 }

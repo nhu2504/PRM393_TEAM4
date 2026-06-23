@@ -5,6 +5,9 @@ class Movie {
   final String genre;
   final String categoryId;
   final String status; // 'now_showing' hoặc 'coming_soon'
+  final int durationMinutes; // thời lượng phim (phút)
+  final String releaseDate; // ngày khởi chiếu, dạng "dd/MM/yyyy"
+  final String description; // mô tả ngắn / thông tin phim
 
   Movie({
     required this.id,
@@ -13,6 +16,9 @@ class Movie {
     required this.genre,
     required this.categoryId,
     required this.status,
+    required this.durationMinutes,
+    required this.releaseDate,
+    this.description = '',
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
@@ -23,6 +29,9 @@ class Movie {
       genre: json['genre'] ?? '',
       categoryId: json['categoryId']?.toString() ?? '',
       status: json['status'] ?? 'now_showing',
+      durationMinutes: json['durationMinutes'] ?? 0,
+      releaseDate: json['releaseDate'] ?? '',
+      description: json['description'] ?? '',
     );
   }
 }

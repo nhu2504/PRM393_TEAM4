@@ -1,4 +1,4 @@
-# project_prm
+# project_g4
 
 A new Flutter project.
 
