@@ -19,8 +19,10 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/ticket_detail_screen.dart';
 import 'screens/rate_experience_screen.dart';
-
+import 'views/main_screen.dart';
+import 'package:flutter/gestures.dart';
 void main() {
   runApp(const PopCornGoApp());
 }
