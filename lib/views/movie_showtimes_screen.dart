@@ -11,24 +11,13 @@ class MovieShowtimesScreen extends StatefulWidget {
 }
 
 class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
-  // Giả lập danh sách ngày trong tuần
-  final List<Map<String, String>> days = [
-    {'day': '13', 'weekday': 'Th 6', 'date': '13/06/2026'},
-    {'day': '14', 'weekday': 'Th 7', 'date': '14/06/2026'},
-    {'day': '15', 'weekday': 'CN', 'date': '15/06/2026'},
-    {'day': '16', 'weekday': 'Th 2', 'date': '16/06/2026'},
-    {'day': '17', 'weekday': 'Th 3', 'date': '17/06/2026'},
-    {'day': '18', 'weekday': 'Th 4', 'date': '18/06/2026'},
-    {'day': '19', 'weekday': 'Th 5', 'date': '19/06/2026'},
-  ];
+  late final List<DateTime> days;
 
-  // Danh sách bộ lọc rạp phim
   final List<String> cinemaFilters = ['Tất cả rạp', 'CGV Cinema', 'BHD Star', 'Lotte Cinema'];
 
   int selectedDayIndex = 0;
-  String selectedCinema = 'Tất cả rạp'; // Biến lưu rạp đang được chọn để lọc
+  String selectedCinema = 'Tất cả rạp';
 
-  // Dữ liệu giả lập danh sách phim kèm lịch chiếu tại các rạp
   final List<Map<String, dynamic>> mockMoviesData = [
     {
       'title': 'Avengers: Endgame',
@@ -95,6 +84,38 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    final today = DateTime.now();
+    days = List.generate(7, (index) => today.add(Duration(days: index)));
+  }
+
+  String _weekdayLabel(DateTime date) {
+    switch (date.weekday) {
+      case DateTime.monday:
+        return 'Th 2';
+      case DateTime.tuesday:
+        return 'Th 3';
+      case DateTime.wednesday:
+        return 'Th 4';
+      case DateTime.thursday:
+        return 'Th 5';
+      case DateTime.friday:
+        return 'Th 6';
+      case DateTime.saturday:
+        return 'Th 7';
+      case DateTime.sunday:
+        return 'CN';
+      default:
+        return 'Th';
+    }
+  }
+
+  String _twoDigits(int value) => value.toString().padLeft(2, '0');
+
+  String _formatDate(DateTime date) => '${_twoDigits(date.day)}/${_twoDigits(date.month)}/${date.year}';
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -110,7 +131,6 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
       ),
       body: Column(
         children: [
-          // 1. Thanh lịch ngang chọn ngày
           Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -122,11 +142,7 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
               itemBuilder: (context, index) {
                 final isSelected = selectedDayIndex == index;
                 return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedDayIndex = index;
-                    });
-                  },
+                  onTap: () => setState(() => selectedDayIndex = index),
                   child: Container(
                     width: 60,
                     margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -136,12 +152,40 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
                       border: Border.all(
                         color: isSelected ? Colors.red : Colors.grey.shade200,
                       ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: Colors.red.withValues(alpha: 0.18),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                          : [],
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        if (index == 0)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 2),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: isSelected ? Colors.white.withValues(alpha: 0.18) : Colors.red.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                'Hôm nay',
+                                style: TextStyle(
+                                  color: isSelected ? Colors.white : Colors.red,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
                         Text(
-                          days[index]['weekday']!,
+                          _weekdayLabel(days[index]),
                           style: TextStyle(
                             color: isSelected ? Colors.white70 : Colors.grey[600],
                             fontSize: 12,
@@ -149,7 +193,7 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          days[index]['day']!,
+                          _twoDigits(days[index].day),
                           style: TextStyle(
                             color: isSelected ? Colors.white : Colors.black,
                             fontSize: 16,
@@ -163,8 +207,6 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
               },
             ),
           ),
-
-          // 2. THANH CHỌN RẠP NGANG (MỚI THÊM)
           Container(
             color: Colors.white,
             padding: const EdgeInsets.only(bottom: 12, top: 4),
@@ -177,11 +219,7 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
                 final filterName = cinemaFilters[index];
                 final isSelected = selectedCinema == filterName;
                 return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedCinema = filterName;
-                    });
-                  },
+                  onTap: () => setState(() => selectedCinema = filterName),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -208,29 +246,22 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
               },
             ),
           ),
-
           const SizedBox(height: 10),
-
-          // 3. Danh sách phim sau khi lọc theo rạp
           Expanded(
             child: ListView.builder(
               itemCount: mockMoviesData.length,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               itemBuilder: (context, index) {
                 final movie = mockMoviesData[index];
-
-                // Lọc danh sách rạp của phim này dựa vào rạp đang chọn ở bộ lọc
                 final filteredCinemas = (movie['cinemas'] as List).where((cinema) {
                   if (selectedCinema == 'Tất cả rạp') return true;
                   return cinema['brand'] == selectedCinema;
                 }).toList();
 
-                // Nếu phim này không có suất chiếu ở rạp đang chọn, ẩn phim này đi luôn
                 if (filteredCinemas.isEmpty) {
                   return const SizedBox.shrink();
                 }
 
-                // Nếu có suất, render giao diện phim kèm theo các rạp đã lọc
                 return _buildMovieSection(movie, filteredCinemas);
               },
             ),
@@ -240,7 +271,6 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
     );
   }
 
-  // Widget hiển thị thông tin 1 bộ phim
   Widget _buildMovieSection(Map<String, dynamic> movie, List<dynamic> cinemas) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -296,8 +326,6 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
             ),
           ),
           const Divider(height: 1, color: Colors.black12),
-
-          // Duyệt qua danh sách rạp đã được truyền vào sau khi lọc
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -312,7 +340,6 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
     );
   }
 
-  // Widget hiển thị suất chiếu của từng rạp
   Widget _buildCinemaShowtimes(Map<String, dynamic> movie, Map<String, dynamic> cinema) {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -335,7 +362,6 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
             style: TextStyle(fontSize: 11, color: Colors.grey[500]),
           ),
           const SizedBox(height: 12),
-
           ...List.generate(cinema['types'].length, (tIndex) {
             final type = cinema['types'][tIndex];
             return Padding(
@@ -368,10 +394,13 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
                           final controller = BookingController(
                             movie: movieObj,
                             cinemaName: cinema['name'],
-                            showDate: days[selectedDayIndex]['date'] ?? '13/06/2026',
+                            showDate: _formatDate(days[selectedDayIndex]),
                             showTime: time,
                           );
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => SeatSelectionScreen(controller: controller)));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => SeatSelectionScreen(controller: controller)),
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
