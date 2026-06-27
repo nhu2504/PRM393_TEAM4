@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/seat_model.dart';
 import '../models/ticket_model.dart';
 import '../models/movie_model.dart';
+import '../models/voucher_model.dart';
+import '../models/food_model.dart';
 
 class BookingController extends ChangeNotifier {
   // Thông tin suất chiếu
@@ -15,7 +17,13 @@ class BookingController extends ChangeNotifier {
   
   // Trạng thái đơn hàng
   List<Seat> selectedSeats = [];
-  List<Map<String, dynamic>> selectedFoods = [];
+  List<FoodItem> selectedFoods = [];
+  
+  // Voucher đang áp dụng
+  Voucher? appliedVoucher;
+  
+  // Phương thức thanh toán
+  String selectedPaymentMethod = 'Ví MoMo';
 
   BookingController({
     required this.movie,
@@ -58,17 +66,47 @@ class BookingController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Cập nhật giỏ hàng đồ ăn
-  void updateFoodCart(List<Map<String, dynamic>> foods) {
-    selectedFoods = foods.where((f) => (f['qty'] as int) > 0).toList();
+  // Cập nhật giỏ hàng đồ ăn (từ FoodItem list)
+  void updateFoodCart(List<FoodItem> foods) {
+    selectedFoods = foods.where((f) => f.qty > 0).toList();
     notifyListeners();
   }
 
-  // Tính tổng tiền
+  // Áp dụng voucher
+  void applyVoucher(Voucher voucher) {
+    appliedVoucher = voucher;
+    notifyListeners();
+  }
+
+  // Hủy voucher
+  void removeVoucher() {
+    appliedVoucher = null;
+    notifyListeners();
+  }
+
+  // Đổi phương thức thanh toán
+  void changePaymentMethod(String method) {
+    selectedPaymentMethod = method;
+    notifyListeners();
+  }
+
+  // Tính tổng tiền ghế
+  int get seatTotal => selectedSeats.fold(0, (sum, seat) => sum + seat.price);
+
+  // Tính tổng tiền đồ ăn
+  int get foodTotal => selectedFoods.fold(0, (sum, food) => sum + food.price * food.qty);
+
+  // Tính giảm giá
+  int get discountAmount {
+    if (appliedVoucher == null) return 0;
+    if (seatTotal + foodTotal < appliedVoucher!.minOrderValue) return 0;
+    return appliedVoucher!.discountValue;
+  }
+
+  // Tính tổng tiền cuối cùng
   int get totalAmount {
-    int seatTotal = selectedSeats.fold(0, (sum, seat) => sum + seat.price);
-    int foodTotal = selectedFoods.fold(0, (sum, food) => sum + (food['price'] as int) * (food['qty'] as int));
-    return seatTotal + foodTotal;
+    int total = seatTotal + foodTotal - discountAmount;
+    return total < 0 ? 0 : total;
   }
 
   // Giả lập thanh toán và sinh vé
@@ -80,7 +118,7 @@ class BookingController extends ChangeNotifier {
       showDate: showDate,
       showTime: showTime,
       seats: List.from(selectedSeats),
-      foods: List.from(selectedFoods),
+      foods: selectedFoods.map((f) => f.toMap()).toList(),
       totalAmount: totalAmount,
       bookingDate: DateTime.now().toString(),
     );

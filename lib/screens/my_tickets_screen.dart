@@ -1,262 +1,398 @@
 import 'package:flutter/material.dart';
+import '../controllers/ticket_controller.dart';
+import '../models/ticket_model.dart';
 
 class MyTicketsScreen extends StatefulWidget {
-  const MyTicketsScreen({Key? key}) : super(key: key);
+  final TicketController? ticketController;
+  const MyTicketsScreen({Key? key, this.ticketController}) : super(key: key);
 
-  static final List<Map<String, dynamic>> globalTickets = [
-    {
-      'title': 'Dune: Hành Tinh Cát 2',
-      'theater': 'CGV Vincom Center',
-      'time': '19:30 - 24/04/2026',
-      'seat': 'H12, H13',
-      'poster': 'https://upload.wikimedia.org/wikipedia/vi/thumb/e/e9/Dune_H%C3%A0nh_tinh_c%C3%A1t_poster.jpg/250px-Dune_H%C3%A0nh_tinh_c%C3%A1t_poster.jpg',
-      'status': 'upcoming'
-    },
-    {
-      'title': 'Mai',
-      'theater': 'CGV Landmark 81',
-      'time': '18:00 - 10/05/2026',
-      'seat': 'C05, C06',
-      'poster': 'https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=500',
-      'status': 'upcoming'
-    },
-    {
-      'title': 'Lật Mặt 7',
-      'theater': 'BHD Star',
-      'time': '20:00 - 05/06/2026',
-      'seat': 'J01, J02',
-      'poster': 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=500',
-      'status': 'upcoming'
-    },
-    {
-      'title': 'Avengers: Endgame',
-      'theater': 'Lotte Cinema',
-      'time': '14:00 - 15/02/2026',
-      'seat': 'F09, F10',
-      'poster': 'https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?w=500',
-      'status': 'past'
-    },
-    {
-      'title': 'Spider-Man: No Way Home',
-      'theater': 'BHD Star',
-      'time': '20:15 - 02/03/2026',
-      'seat': 'A01, A02',
-      'poster': 'https://image.tmdb.org/t/p/w500/rweIrveL43TaxUN0akQEaAXL6x0.jpg',
-      'status': 'past'
-    },
-    {
-      'title': 'Đào, Phở và Piano',
-      'theater': 'Trung tâm Chiếu phim QG',
-      'time': '10:00 - 20/01/2026',
-      'seat': 'G05, G06',
-      'poster': 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=500',
-      'status': 'past'
-    }
-  ];
+  /// Controller tĩnh dùng khi không truyền qua constructor
+  static TicketController globalTicketController = TicketController();
 
   @override
   State<MyTicketsScreen> createState() => _MyTicketsScreenState();
 }
 
-class _MyTicketsScreenState extends State<MyTicketsScreen> {
+class _MyTicketsScreenState extends State<MyTicketsScreen> with TickerProviderStateMixin {
+  late final TicketController _controller;
+  late final AnimationController _animController;
+  late final Animation<double> _fadeAnim;
 
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.ticketController ?? MyTicketsScreen.globalTicketController;
+    _controller.addListener(_onChanged);
+
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
+    _animController.forward();
+  }
+
+  void _onChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onChanged);
+    _animController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Colors.blueAccent, Colors.purpleAccent]),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.movie_filter, color: Colors.white, size: 24),
-              ),
-              const SizedBox(width: 12),
-              ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  colors: [Colors.blueAccent, Colors.purpleAccent],
-                ).createShader(bounds),
-                child: const Text(
-                  'Vé của tôi',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 26,
-                    letterSpacing: 0.5,
+        backgroundColor: const Color(0xFF0D0D2B),
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              expandedHeight: 140,
+              floating: false,
+              pinned: true,
+              automaticallyImplyLeading: false,
+              backgroundColor: const Color(0xFF0D0D2B),
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF1A1A4E), Color(0xFF0D0D2B)],
+                    ),
+                  ),
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                      child: FadeTransition(
+                        opacity: _fadeAnim,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [Color(0xFF6C63FF), Color(0xFF4ECDC4)],
+                                    ),
+                                    borderRadius: BorderRadius.circular(14),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF6C63FF).withOpacity(0.4),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Icon(Icons.confirmation_num_rounded, color: Colors.white, size: 26),
+                                ),
+                                const SizedBox(width: 14),
+                                ShaderMask(
+                                  shaderCallback: (bounds) => const LinearGradient(
+                                    colors: [Color(0xFF6C63FF), Color(0xFF4ECDC4)],
+                                  ).createShader(bounds),
+                                  child: const Text(
+                                    'Vé của tôi',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 28,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${_controller.tickets.length} vé đã đặt',
+                              style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(70),
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: Colors.grey[300]!, width: 1),
-              ),
-              child: TabBar(
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                indicator: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Colors.blueAccent, Colors.lightBlueAccent]),
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(color: Colors.blueAccent.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 4)),
-                  ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(60),
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  ),
+                  child: TabBar(
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    indicator: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF6C63FF), Color(0xFF4ECDC4)],
+                      ),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF6C63FF).withOpacity(0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    labelColor: Colors.white,
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    unselectedLabelColor: Colors.white54,
+                    tabs: [
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.upcoming_rounded, size: 18),
+                            const SizedBox(width: 6),
+                            Text('Sắp chiếu (${_controller.upcomingTickets.length})'),
+                          ],
+                        ),
+                      ),
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.history_rounded, size: 18),
+                            const SizedBox(width: 6),
+                            Text('Đã xem (${_controller.pastTickets.length})'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                labelColor: Colors.white,
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                unselectedLabelColor: Colors.grey[600],
-                tabs: const [
-                  Tab(text: 'Sắp chiếu'),
-                  Tab(text: 'Đã xem'),
-                ],
               ),
             ),
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            _buildTicketList('upcoming'),
-            _buildTicketList('past'),
           ],
+          body: TabBarView(
+            children: [
+              _buildTicketList(_controller.upcomingTickets, isUpcoming: true),
+              _buildTicketList(_controller.pastTickets, isUpcoming: false),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTicketList(String status) {
-    final filteredTickets = MyTicketsScreen.globalTickets.where((t) => t['status'] == status).toList();
-
-    if (filteredTickets.isEmpty) {
-      return const Center(child: Text('Không có vé nào.'));
+  Widget _buildTicketList(List<Ticket> tickets, {required bool isUpcoming}) {
+    if (tickets.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isUpcoming ? Icons.confirmation_num_outlined : Icons.history_rounded,
+              size: 80,
+              color: Colors.white.withOpacity(0.15),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              isUpcoming ? 'Bạn chưa có vé nào sắp chiếu' : 'Chưa có lịch sử xem phim',
+              style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              isUpcoming ? 'Hãy đặt vé xem phim ngay!' : '',
+              style: TextStyle(color: Colors.white.withOpacity(0.25), fontSize: 13),
+            ),
+          ],
+        ),
+      );
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: filteredTickets.length,
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+      itemCount: tickets.length,
       itemBuilder: (context, index) {
-        final ticket = filteredTickets[index];
-        return Card(
-          elevation: 6,
-          shadowColor: Colors.black12,
-          margin: const EdgeInsets.only(bottom: 20.0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        final ticket = tickets[index];
+        return _buildTicketCard(ticket, index, isUpcoming);
+      },
+    );
+  }
+
+  Widget _buildTicketCard(Ticket ticket, int index, bool isUpcoming) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 400 + (index * 100)),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isUpcoming
+                ? [const Color(0xFF1E1E50), const Color(0xFF2A2A5E)]
+                : [const Color(0xFF1A1A35), const Color(0xFF1E1E40)],
+          ),
+          border: Border.all(
+            color: isUpcoming
+                ? const Color(0xFF6C63FF).withOpacity(0.3)
+                : Colors.white.withOpacity(0.06),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isUpcoming
+                  ? const Color(0xFF6C63FF).withOpacity(0.15)
+                  : Colors.black.withOpacity(0.2),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(20),
             onTap: () {
               Navigator.pushNamed(context, '/ticket_detail', arguments: ticket);
             },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: const LinearGradient(
-                  colors: [Colors.white, Color(0xFFF8FBFF)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              padding: const EdgeInsets.all(16.0),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Poster
                   Hero(
-                    tag: 'poster_${ticket['title']}',
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.network(
-                        ticket['poster'],
-                        width: 95,
-                        height: 140,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: 95,
-                          height: 140,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.movie, size: 40, color: Colors.grey),
+                    tag: 'ticket_poster_${ticket.id}',
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Image.network(
+                          ticket.movie.image,
+                          width: 90,
+                          height: 130,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            width: 90,
+                            height: 130,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2A2A5E),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Icon(Icons.movie, size: 36, color: Colors.white24),
+                          ),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
+                  // Info
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          ticket['title'],
-                          style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: Colors.black87),
+                          ticket.movie.title,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on, size: 16, color: Colors.blueAccent),
-                            const SizedBox(width: 6),
-                            Expanded(child: Text(ticket['theater'], style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w500))),
-                          ],
-                        ),
+                        _buildInfoChip(Icons.location_on_rounded, ticket.cinemaName, const Color(0xFF4ECDC4)),
                         const SizedBox(height: 6),
+                        _buildInfoChip(Icons.access_time_filled_rounded, '${ticket.showTime} | ${ticket.showDate}', const Color(0xFFFFB74D)),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
-                            const Icon(Icons.access_time_filled, size: 16, color: Colors.orangeAccent),
-                            const SizedBox(width: 6),
-                            Text(ticket['time'], style: TextStyle(color: Colors.grey[700], fontSize: 13, fontWeight: FontWeight.w500)),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                            // Ghế tag
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
-                                boxShadow: [BoxShadow(color: Colors.blueAccent.withOpacity(0.05), blurRadius: 4)],
-                              ),
-                              child: Text('Ghế: ${ticket['seat']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.blueAccent)),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: status == 'upcoming' ? Colors.green[50] : Colors.grey[200],
-                                borderRadius: BorderRadius.circular(10),
+                                color: const Color(0xFF6C63FF).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: const Color(0xFF6C63FF).withOpacity(0.3)),
                               ),
                               child: Text(
-                                status == 'upcoming' ? 'Sắp chiếu' : 'Đã xem',
-                                style: TextStyle(
-                                  color: status == 'upcoming' ? Colors.green[700] : Colors.grey[700],
+                                'Ghế: ${ticket.seats.map((s) => s.id).join(', ')}',
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
+                                  color: Color(0xFF6C63FF),
                                 ),
                               ),
-                            )
+                            ),
+                            const Spacer(),
+                            // Status badge
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                gradient: isUpcoming
+                                    ? const LinearGradient(colors: [Color(0xFF4ECDC4), Color(0xFF44B09E)])
+                                    : null,
+                                color: isUpcoming ? null : Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                isUpcoming ? '● Sắp chiếu' : '● Đã xem',
+                                style: TextStyle(
+                                  color: isUpcoming ? Colors.white : Colors.white54,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoChip(IconData icon, String text, Color color) {
+    return Row(
+      children: [
+        Icon(icon, size: 15, color: color),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13, fontWeight: FontWeight.w500),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 }
