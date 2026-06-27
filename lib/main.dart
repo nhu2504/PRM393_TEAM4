@@ -21,9 +21,17 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/ticket_detail_screen.dart';
 import 'screens/rate_experience_screen.dart';
+import 'screens/my_tickets_screen.dart';
 import 'views/main_screen.dart';
 import 'package:flutter/gestures.dart';
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await MyTicketsScreen.globalTicketController.fetchTickets();
+  } catch (e) {
+    debugPrint('Lỗi khởi tạo Database: $e');
+  }
   runApp(const PopCornGoApp());
 }
 

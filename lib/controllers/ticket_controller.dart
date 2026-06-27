@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
 import '../models/ticket_model.dart';
+import '../helpers/db_helper.dart';
 
 /// Controller toàn cục để quản lý danh sách vé đã đặt.
 /// Được khởi tạo 1 lần ở main.dart và truyền xuống các màn hình cần dùng.
 class TicketController extends ChangeNotifier {
-  final List<Ticket> _tickets = [];
+  List<Ticket> _tickets = [];
 
   List<Ticket> get tickets => List.unmodifiable(_tickets);
 
+  Future<void> fetchTickets() async {
+    _tickets = await DatabaseHelper.instance.getAllTickets();
+    notifyListeners();
+  }
+
   /// Thêm vé mới sau khi thanh toán thành công
-  void addTicket(Ticket ticket) {
+  Future<void> addTicket(Ticket ticket) async {
+    await DatabaseHelper.instance.insertTicket(ticket);
     _tickets.insert(0, ticket); // Vé mới nhất lên đầu
     notifyListeners();
   }
 
-  /// Lọc vé sắp chiếu (showDate >= hôm nay)
+  /// Lọc vé sắp chiếu (showDate >= hôm nay hoặc không parse được ngày)
   List<Ticket> get upcomingTickets {
     final now = DateTime.now();
     return _tickets.where((t) {
       final date = _parseDate(t.showDate);
-      return date != null && (date.isAfter(now) || _isSameDay(date, now));
+      // Nếu date null (dữ liệu mock không đúng chuẩn dd/MM/yyyy) -> mặc định cho vào sắp chiếu
+      if (date == null) return true;
+      return date.isAfter(now) || _isSameDay(date, now);
     }).toList();
   }
 
@@ -33,7 +42,8 @@ class TicketController extends ChangeNotifier {
   }
 
   /// Hủy vé
-  void cancelTicket(String ticketId) {
+  Future<void> cancelTicket(String ticketId) async {
+    await DatabaseHelper.instance.deleteTicket(ticketId);
     _tickets.removeWhere((t) => t.id == ticketId);
     notifyListeners();
   }

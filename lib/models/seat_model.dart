@@ -14,4 +14,26 @@ class Seat {
     required this.price,
     this.isBooked = false,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'row': row,
+      'number': number,
+      'type': type,
+      'price': price,
+      'isBooked': isBooked ? 1 : 0,
+    };
+  }
+
+  factory Seat.fromMap(Map<String, dynamic> map) {
+    return Seat(
+      id: map['id'],
+      row: map['row'],
+      number: map['number'],
+      type: map['type'] ?? 'standard',
+      price: map['price'] ?? 0,
+      isBooked: map['isBooked'] == 1 || map['isBooked'] == true,
+    );
+  }
 }

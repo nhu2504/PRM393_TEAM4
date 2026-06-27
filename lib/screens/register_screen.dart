@@ -119,7 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   width: 190,
                   onPressed: isChecked
                       ? () {
-                    print("Đăng ký");
+                    debugPrint("Đăng ký");
                   }
                       : () {
                     ScaffoldMessenger.of(context).showSnackBar(

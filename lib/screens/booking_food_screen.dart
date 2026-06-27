@@ -6,10 +6,10 @@ import 'checkout_screen.dart';
 class BookingFoodScreen extends StatefulWidget {
   final BookingController controller;
 
-  const BookingFoodScreen({Key? key, required this.controller}) : super(key: key);
+  const BookingFoodScreen({super.key, required this.controller});
 
   @override
-  _BookingFoodScreenState createState() => _BookingFoodScreenState();
+  State<BookingFoodScreen> createState() => _BookingFoodScreenState();
 }
 
 class _BookingFoodScreenState extends State<BookingFoodScreen> {
@@ -69,98 +69,105 @@ class _BookingFoodScreenState extends State<BookingFoodScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: foods.length,
-              itemBuilder: (context, index) {
-                final food = foods[index];
-                return _buildFoodCard(food, index);
-              },
-            ),
-          ),
-
-          // Bottom Bar
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A1A4E),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-              border: Border(top: BorderSide(color: Colors.white.withOpacity(0.08))),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 16,
-                  offset: const Offset(0, -4),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: foods.length,
+                    itemBuilder: (context, index) {
+                      final food = foods[index];
+                      return _buildFoodCard(food, index);
+                    },
+                  ),
                 ),
-              ],
-            ),
-            child: SafeArea(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Tổng thanh toán',
-                        style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 13),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${_formatCurrency(widget.controller.totalAmount)}đ',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                          color: Color(0xFFFF9800),
-                        ),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A1A4E),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                    border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.08))),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 16,
+                        offset: const Offset(0, -4),
                       ),
                     ],
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFF6B6B), Color(0xFFEE5A24)],
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFFFF6B6B).withOpacity(0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
+                  child: SafeArea(
+                    top: false,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Tổng thanh toán',
+                              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 13),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${_formatCurrency(widget.controller.totalAmount)}đ',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                                color: Color(0xFFFF9800),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF6B6B), Color(0xFFEE5A24)],
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B6B).withValues(alpha: 0.4),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(14),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CheckoutScreen(controller: widget.controller),
+                                  ),
+                                );
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                                child: Text(
+                                  'Tiếp tục',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(14),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CheckoutScreen(controller: widget.controller),
-                            ),
-                          );
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                          child: Text(
-                            'Tiếp tục',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -186,9 +193,7 @@ class _BookingFoodScreenState extends State<BookingFoodScreen> {
             colors: [Color(0xFF1E1E50), Color(0xFF2A2A5E)],
           ),
           border: Border.all(
-            color: food.qty > 0
-                ? const Color(0xFFFF9800).withOpacity(0.3)
-                : Colors.white.withOpacity(0.06),
+            color: food.qty > 0 ? const Color(0xFFFF9800).withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.06),
           ),
         ),
         child: Padding(
@@ -202,8 +207,9 @@ class _BookingFoodScreenState extends State<BookingFoodScreen> {
                   width: 75,
                   height: 75,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 75, height: 75,
+                  errorBuilder: (_, _, _) => Container(
+                    width: 75,
+                    height: 75,
                     decoration: BoxDecoration(
                       color: const Color(0xFF2A2A5E),
                       borderRadius: BorderRadius.circular(14),
@@ -217,9 +223,15 @@ class _BookingFoodScreenState extends State<BookingFoodScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(food.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
+                    Text(
+                      food.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
+                    ),
                     const SizedBox(height: 4),
-                    Text(food.description, style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12)),
+                    Text(
+                      food.description,
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12),
+                    ),
                     const SizedBox(height: 6),
                     Text(
                       '${_formatCurrency(food.price)}đ',
@@ -230,7 +242,7 @@ class _BookingFoodScreenState extends State<BookingFoodScreen> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.06),
+                  color: Colors.white.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Row(
@@ -245,7 +257,10 @@ class _BookingFoodScreenState extends State<BookingFoodScreen> {
                         }
                       },
                     ),
-                    Text('${food.qty}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
+                    Text(
+                      '${food.qty}',
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
                     IconButton(
                       icon: const Icon(Icons.add, size: 20),
                       color: const Color(0xFFFF9800),

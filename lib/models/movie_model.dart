@@ -34,6 +34,20 @@ class Movie {
       description: json['description'] ?? '',
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'image': image,
+      'genre': genre,
+      'categoryId': categoryId,
+      'status': status,
+      'durationMinutes': durationMinutes,
+      'releaseDate': releaseDate,
+      'description': description,
+    };
+  }
 }
 
 class BannerItem {

@@ -3,7 +3,7 @@ import '../models/ticket_model.dart';
 import '../screens/my_tickets_screen.dart';
 
 class TicketDetailScreen extends StatelessWidget {
-  const TicketDetailScreen({Key? key}) : super(key: key);
+  const TicketDetailScreen({super.key});
 
   String _formatCurrency(int amount) {
     final str = amount.toString();
@@ -59,7 +59,7 @@ class TicketDetailScreen extends StatelessWidget {
                     width: double.infinity,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (_, _, _) => Container(
                       height: 350,
                       color: const Color(0xFF1A1A4E),
                       child: const Center(child: Icon(Icons.movie, color: Colors.white24, size: 60)),
@@ -71,7 +71,7 @@ class TicketDetailScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withValues(alpha: 0.7),
                         Colors.transparent,
                         const Color(0xFF0D0D2B),
                       ],
@@ -99,10 +99,10 @@ class TicketDetailScreen extends StatelessWidget {
                           end: Alignment.bottomRight,
                           colors: [Color(0xFF1E1E50), Color(0xFF2A2A5E)],
                         ),
-                        border: Border.all(color: const Color(0xFF6C63FF).withOpacity(0.2)),
+                        border: Border.all(color: const Color(0xFF6C63FF).withValues(alpha: 0.2)),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF6C63FF).withOpacity(0.15),
+                            color: const Color(0xFF6C63FF).withValues(alpha: 0.15),
                             blurRadius: 30,
                             offset: const Offset(0, 10),
                           ),
@@ -147,7 +147,7 @@ class TicketDetailScreen extends StatelessWidget {
                               (index) => Expanded(
                                 child: Container(
                                   height: 2,
-                                  color: index % 2 == 0 ? Colors.transparent : Colors.white.withOpacity(0.08),
+                                  color: index % 2 == 0 ? Colors.transparent : Colors.white.withValues(alpha: 0.08),
                                 ),
                               ),
                             ),
@@ -174,7 +174,7 @@ class TicketDetailScreen extends StatelessWidget {
                                     fontSize: 16,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 2,
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                   ),
                                 ),
                                 const SizedBox(height: 16),
@@ -219,8 +219,8 @@ class TicketDetailScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: const Color(0xFFFF6B6B).withOpacity(0.4)),
-                              color: const Color(0xFFFF6B6B).withOpacity(0.08),
+                              border: Border.all(color: const Color(0xFFFF6B6B).withValues(alpha: 0.4)),
+                              color: const Color(0xFFFF6B6B).withValues(alpha: 0.08),
                             ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -257,12 +257,12 @@ class TicketDetailScreen extends StatelessWidget {
         title: const Text('Xác nhận hủy vé', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         content: Text(
           'Bạn có chắc chắn muốn hủy vé "${ticket.movie.title}" không?',
-          style: TextStyle(color: Colors.white.withOpacity(0.7)),
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Không', style: TextStyle(color: Colors.white.withOpacity(0.5))),
+            child: Text('Không', style: TextStyle(color: Colors.white.withValues(alpha: 0.5))),
           ),
           TextButton(
             onPressed: () {
@@ -297,7 +297,7 @@ class TicketDetailScreen extends StatelessWidget {
             width: 80,
             child: Text(
               label,
-              style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 14),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 14),
             ),
           ),
           Expanded(

@@ -13,13 +13,13 @@ class MovieShowtimesScreen extends StatefulWidget {
 class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
   // Giả lập danh sách ngày trong tuần
   final List<Map<String, String>> days = [
-    {'day': '13', 'weekday': 'Th 6'},
-    {'day': '14', 'weekday': 'Th 7'},
-    {'day': '15', 'weekday': 'CN'},
-    {'day': '16', 'weekday': 'Th 2'},
-    {'day': '17', 'weekday': 'Th 3'},
-    {'day': '18', 'weekday': 'Th 4'},
-    {'day': '19', 'weekday': 'Th 5'},
+    {'day': '13', 'weekday': 'Th 6', 'date': '13/06/2026'},
+    {'day': '14', 'weekday': 'Th 7', 'date': '14/06/2026'},
+    {'day': '15', 'weekday': 'CN', 'date': '15/06/2026'},
+    {'day': '16', 'weekday': 'Th 2', 'date': '16/06/2026'},
+    {'day': '17', 'weekday': 'Th 3', 'date': '17/06/2026'},
+    {'day': '18', 'weekday': 'Th 4', 'date': '18/06/2026'},
+    {'day': '19', 'weekday': 'Th 5', 'date': '19/06/2026'},
   ];
 
   // Danh sách bộ lọc rạp phim
@@ -186,7 +186,7 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.red.withOpacity(0.1) : Colors.white,
+                      color: isSelected ? Colors.red.withValues(alpha: 0.1) : Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isSelected ? Colors.red : Colors.grey.shade300,
@@ -249,7 +249,7 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           )
@@ -269,8 +269,8 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(6),
-                    image: const DecorationImage(
-                      image: NetworkImage('https://via.placeholder.com/100x140'),
+                    image: DecorationImage(
+                      image: NetworkImage(movie['image'] ?? 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -355,20 +355,20 @@ class _MovieShowtimesScreenState extends State<MovieShowtimesScreen> {
                       return GestureDetector(
                         onTap: () {
                           final movieObj = Movie(
-                            id: movie['id'].toString(),
-                            title: movie['title'],
-                            image: movie['image'] ?? 'https://via.placeholder.com/100x140',
-                            genre: movie['genre'],
-                            categoryId: movie['categoryId'].toString(),
-                            status: movie['status'],
-                            durationMinutes: movie['durationMinutes'] ?? 0,
-                            releaseDate: movie['releaseDate'] ?? '',
+                            id: movie['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+                            title: movie['title'] ?? 'Phim hay',
+                            image: movie['image'] ?? 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500',
+                            genre: movie['genre'] ?? 'Hành động',
+                            categoryId: movie['categoryId']?.toString() ?? '1',
+                            status: movie['status'] ?? 'now_showing',
+                            durationMinutes: movie['durationMinutes'] ?? 120,
+                            releaseDate: movie['releaseDate'] ?? '01/01/2026',
                             description: movie['description'] ?? '',
                           );
                           final controller = BookingController(
                             movie: movieObj,
                             cinemaName: cinema['name'],
-                            showDate: '${days[selectedDayIndex]['weekday']} ${days[selectedDayIndex]['day']}',
+                            showDate: days[selectedDayIndex]['date'] ?? '13/06/2026',
                             showTime: time,
                           );
                           Navigator.push(context, MaterialPageRoute(builder: (_) => SeatSelectionScreen(controller: controller)));

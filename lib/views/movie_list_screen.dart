@@ -35,7 +35,7 @@ class MovieListScreen extends StatelessWidget {
           : ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: movies.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        separatorBuilder: (_, _) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
           final movie = movies[index];
           return _MovieListItem(
@@ -71,7 +71,7 @@ class _MovieListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),

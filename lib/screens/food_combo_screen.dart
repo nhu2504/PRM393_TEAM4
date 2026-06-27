@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '../models/food_model.dart';
 
 class FoodComboScreen extends StatefulWidget {
-  const FoodComboScreen({Key? key}) : super(key: key);
+  const FoodComboScreen({super.key});
 
   @override
-  _FoodComboScreenState createState() => _FoodComboScreenState();
+  State<FoodComboScreen> createState() => _FoodComboScreenState();
 }
 
 class _FoodComboScreenState extends State<FoodComboScreen> {
@@ -17,163 +17,172 @@ class _FoodComboScreenState extends State<FoodComboScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D2B),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFFFF9800).withOpacity(0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(Icons.fastfood_rounded, color: Colors.white, size: 26),
-                  ),
-                  const SizedBox(width: 14),
-                  ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
-                    ).createShader(bounds),
-                    child: const Text(
-                      'Bắp Nước',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 28,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                'Chọn combo yêu thích của bạn',
-                style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Danh sách combo
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                itemCount: combos.length,
-                itemBuilder: (context, index) {
-                  return _buildComboCard(combos[index], index);
-                },
-              ),
-            ),
-
-            // Bottom bar
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A1A4E),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-                border: Border(top: BorderSide(color: Colors.white.withOpacity(0.08))),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, -6),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                  child: Row(
                     children: [
-                      Text(
-                        'Tổng cộng',
-                        style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 13, fontWeight: FontWeight.w500),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFFF9800).withValues(alpha: 0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.fastfood_rounded, color: Colors.white, size: 26),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${_formatCurrency(totalPrice)}đ',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 24,
-                          color: Color(0xFFFF9800),
+                      const SizedBox(width: 14),
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
+                        ).createShader(bounds),
+                        child: const Text(
+                          'Bắp Nước',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 28,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  AnimatedOpacity(
-                    opacity: totalPrice > 0 ? 1.0 : 0.4,
-                    duration: const Duration(milliseconds: 200),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: totalPrice > 0
-                            ? [
-                                BoxShadow(
-                                  color: const Color(0xFFFF9800).withOpacity(0.4),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ]
-                            : [],
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    'Chọn combo yêu thích của bạn',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 14),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                    itemCount: combos.length,
+                    itemBuilder: (context, index) {
+                      return _buildComboCard(combos[index], index);
+                    },
+                  ),
+                ),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A1A4E),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                    border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.08))),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, -6),
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(16),
-                          onTap: totalPrice > 0 ? () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text('Vui lòng chọn phim và suất chiếu trước khi mua bắp nước!'),
-                                backgroundColor: const Color(0xFF6C63FF),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              ),
-                            );
-                          } : null,
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Đặt ngay',
-                                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Tổng cộng',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.5),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${_formatCurrency(totalPrice)}đ',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 24,
+                              color: Color(0xFFFF9800),
+                            ),
+                          ),
+                        ],
+                      ),
+                      AnimatedOpacity(
+                        opacity: totalPrice > 0 ? 1.0 : 0.4,
+                        duration: const Duration(milliseconds: 200),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: totalPrice > 0
+                                ? [
+                                    BoxShadow(
+                                      color: const Color(0xFFFF9800).withValues(alpha: 0.4),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ]
+                                : [],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: totalPrice > 0
+                                  ? () {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: const Text(
+                                            'Vui lòng chọn phim và suất chiếu trước khi mua bắp nước!',
+                                          ),
+                                          backgroundColor: const Color(0xFF6C63FF),
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        ),
+                                      );
+                                    }
+                                  : null,
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Đặt ngay',
+                                      style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(width: 6),
+                                    Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
+                                  ],
                                 ),
-                                SizedBox(width: 6),
-                                Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
-                              ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -200,15 +209,11 @@ class _FoodComboScreenState extends State<FoodComboScreen> {
             colors: [Color(0xFF1E1E50), Color(0xFF2A2A5E)],
           ),
           border: Border.all(
-            color: food.qty > 0
-                ? const Color(0xFFFF9800).withOpacity(0.3)
-                : Colors.white.withOpacity(0.06),
+            color: food.qty > 0 ? const Color(0xFFFF9800).withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.06),
           ),
           boxShadow: [
             BoxShadow(
-              color: food.qty > 0
-                  ? const Color(0xFFFF9800).withOpacity(0.1)
-                  : Colors.black.withOpacity(0.15),
+              color: food.qty > 0 ? const Color(0xFFFF9800).withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -218,13 +223,12 @@ class _FoodComboScreenState extends State<FoodComboScreen> {
           padding: const EdgeInsets.all(14),
           child: Row(
             children: [
-              // Hình ảnh
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -250,7 +254,6 @@ class _FoodComboScreenState extends State<FoodComboScreen> {
                 ),
               ),
               const SizedBox(width: 14),
-              // Thông tin
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,7 +269,7 @@ class _FoodComboScreenState extends State<FoodComboScreen> {
                     const SizedBox(height: 4),
                     Text(
                       food.description,
-                      style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -280,12 +283,11 @@ class _FoodComboScreenState extends State<FoodComboScreen> {
                   ],
                 ),
               ),
-              // +/- controls
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.06),
+                  color: Colors.white.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(25),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                 ),
                 child: Row(
                   children: [

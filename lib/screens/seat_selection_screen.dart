@@ -6,10 +6,10 @@ import 'booking_food_screen.dart';
 class SeatSelectionScreen extends StatefulWidget {
   final BookingController controller;
 
-  const SeatSelectionScreen({Key? key, required this.controller}) : super(key: key);
+  const SeatSelectionScreen({super.key, required this.controller});
 
   @override
-  _SeatSelectionScreenState createState() => _SeatSelectionScreenState();
+  State<SeatSelectionScreen> createState() => _SeatSelectionScreenState();
 }
 
 class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
@@ -58,168 +58,159 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          // Thông tin rạp & giờ chiếu
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              '${widget.controller.cinemaName} | ${widget.controller.showDate} - ${widget.controller.showTime}',
-              style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
-            ),
-          ),
-          
-          const SizedBox(height: 20),
-          
-          // Màn hình (Screen)
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 40),
-            height: 40,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF6C63FF).withOpacity(0.5),
-                  Colors.transparent,
-                ],
-              ),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50),
-              ),
-            ),
-            child: Center(
-              child: Text(
-                'MÀN HÌNH',
-                style: TextStyle(color: Colors.white.withOpacity(0.5), letterSpacing: 2, fontSize: 12),
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 40),
-          
-          // Sơ đồ ghế
-          Expanded(
-            child: InteractiveViewer(
-              child: Center(
-                child: Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  alignment: WrapAlignment.center,
-                  children: widget.controller.availableSeats.map((seat) => _buildSeat(seat)).toList(),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  '${widget.controller.cinemaName} | ${widget.controller.showDate} - ${widget.controller.showTime}',
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 14),
                 ),
               ),
-            ),
-          ),
-          
-          // Chú thích
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildLegend(Colors.white.withOpacity(0.2), 'Trống'),
-                const SizedBox(width: 14),
-                _buildLegend(const Color(0xFF6C63FF), 'Đang chọn'),
-                const SizedBox(width: 14),
-                _buildLegend(Colors.white.withOpacity(0.05), 'Đã đặt'),
-                const SizedBox(width: 14),
-                _buildLegend(const Color(0xFFFFB74D), 'VIP'),
-              ],
-            ),
-          ),
-          
-          // Bottom Bar
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A1A4E),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-              border: Border(top: BorderSide(color: Colors.white.withOpacity(0.08))),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 16,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Tạm tính', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 13)),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${_formatCurrency(widget.controller.totalAmount)}đ',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Color(0xFFFF9800)),
-                      ),
+              const SizedBox(height: 20),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 40),
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color(0xFF6C63FF).withValues(alpha: 0.5),
+                      Colors.transparent,
                     ],
                   ),
-                  AnimatedOpacity(
-                    opacity: widget.controller.selectedSeats.isEmpty ? 0.4 : 1.0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFF6B6B), Color(0xFFEE5A24)],
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: widget.controller.selectedSeats.isNotEmpty
-                            ? [
-                                BoxShadow(
-                                  color: const Color(0xFFFF6B6B).withOpacity(0.4),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ]
-                            : [],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(50),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    'MÀN HÌNH',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.5), letterSpacing: 2, fontSize: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              Expanded(
+                child: InteractiveViewer(
+                  child: Center(
+                    child: Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      alignment: WrapAlignment.center,
+                      children: widget.controller.availableSeats.map(_buildSeat).toList(),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Wrap(
+                  spacing: 14,
+                  runSpacing: 10,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _buildLegend(Colors.white.withValues(alpha: 0.2), 'Trống'),
+                    _buildLegend(const Color(0xFF6C63FF), 'Đang chọn'),
+                    _buildLegend(Colors.white.withValues(alpha: 0.05), 'Đã đặt'),
+                    _buildLegend(const Color(0xFFFFB74D), 'VIP'),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A4E),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.08))),
+                ),
+                child: SafeArea(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Tạm tính', style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${_formatCurrency(widget.controller.totalAmount)}đ',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Color(0xFFFF9800)),
+                          ),
+                        ],
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(14),
-                          onTap: widget.controller.selectedSeats.isEmpty ? null : () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BookingFoodScreen(controller: widget.controller),
+                      AnimatedOpacity(
+                        opacity: widget.controller.selectedSeats.isEmpty ? 0.4 : 1.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF6B6B), Color(0xFFEE5A24)],
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: widget.controller.selectedSeats.isNotEmpty
+                                ? [
+                                    BoxShadow(
+                                      color: const Color(0xFFFF6B6B).withValues(alpha: 0.4),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ]
+                                : [],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(14),
+                              onTap: widget.controller.selectedSeats.isEmpty
+                                  ? null
+                                  : () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BookingFoodScreen(controller: widget.controller),
+                                        ),
+                                      );
+                                    },
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                                child: Text(
+                                  'Tiếp tục',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
                               ),
-                            );
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                            child: Text('Tiếp tục', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildSeat(Seat seat) {
     final isSelected = widget.controller.selectedSeats.contains(seat);
-    Color seatColor = Colors.white.withOpacity(0.15); // standard trống
+    Color seatColor = Colors.white.withValues(alpha: 0.15);
     Color textColor = Colors.white54;
 
     if (seat.type == 'vip') {
-      seatColor = const Color(0xFFFFB74D).withOpacity(0.3);
+      seatColor = const Color(0xFFFFB74D).withValues(alpha: 0.3);
       textColor = const Color(0xFFFFB74D);
     }
     if (seat.isBooked) {
-      seatColor = Colors.white.withOpacity(0.03);
+      seatColor = Colors.white.withValues(alpha: 0.03);
       textColor = Colors.white24;
     }
     if (isSelected) {
@@ -240,13 +231,13 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
             color: isSelected
                 ? const Color(0xFF6C63FF)
                 : seat.type == 'vip'
-                    ? const Color(0xFFFFB74D).withOpacity(0.3)
-                    : Colors.white.withOpacity(0.08),
+                    ? const Color(0xFFFFB74D).withValues(alpha: 0.3)
+                    : Colors.white.withValues(alpha: 0.08),
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Color(0xFF6C63FF).withOpacity(0.4),
+                    color: const Color(0xFF6C63FF).withValues(alpha: 0.4),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -269,6 +260,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
   Widget _buildLegend(Color color, String text) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           width: 14,
@@ -279,7 +271,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
           ),
         ),
         const SizedBox(width: 5),
-        Text(text, style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11)),
+        Text(text, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 11)),
       ],
     );
   }
