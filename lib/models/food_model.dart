@@ -27,13 +27,34 @@ class FoodItem {
     );
   }
 
-  /// Thành Map để lưu vào Ticket
+  /// Thành Map để lưu vào SQLite (không kèm qty)
+  Map<String, dynamic> toDbMap() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'price': price,
+      'image': image,
+    };
+  }
+
+  /// Thành Map để lưu vào Ticket (kèm qty)
   Map<String, dynamic> toMap() {
     return {
       'name': name,
       'price': price,
       'qty': qty,
     };
+  }
+
+  factory FoodItem.fromMap(Map<String, dynamic> map) {
+    return FoodItem(
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      description: map['description'] ?? '',
+      price: map['price'] ?? 0,
+      image: map['image'] ?? '',
+    );
   }
 
   /// Danh sách combo mặc định

@@ -21,6 +21,34 @@ class Voucher {
     this.isUsed = false,
   });
 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'code': code,
+      'title': title,
+      'description': description,
+      'discountValue': discountValue,
+      'minOrderValue': minOrderValue,
+      'expiryDate': expiryDate,
+      'iconType': iconType,
+      'isUsed': isUsed ? 1 : 0,
+    };
+  }
+
+  factory Voucher.fromMap(Map<String, dynamic> map) {
+    return Voucher(
+      id: map['id'] ?? '',
+      code: map['code'] ?? '',
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
+      discountValue: map['discountValue'] ?? 0,
+      minOrderValue: map['minOrderValue'] ?? 0,
+      expiryDate: map['expiryDate'] ?? '',
+      iconType: map['iconType'] ?? 'percent',
+      isUsed: map['isUsed'] == 1,
+    );
+  }
+
   /// Danh sách voucher mock
   static List<Voucher> getMockVouchers() {
     return [

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/cinema_model.dart';
-import '../services/api_service.dart';
+import '../repositories/cinema_repository.dart';
 
 class CinemaController extends ChangeNotifier {
+  final CinemaRepository _repository = CinemaRepository();
   bool isLoading = false;
   String? errorMessage;
 
@@ -19,7 +20,7 @@ class CinemaController extends ChangeNotifier {
   }
 
   Future<void> _init() async {
-    final fetchedBrands = await ApiService.fetchBrands();
+    final fetchedBrands = await _repository.getCinemaBrands();
     brands = ['Tất cả', ...fetchedBrands];
     await fetchCinemas();
   }
@@ -30,7 +31,7 @@ class CinemaController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      cinemas = await ApiService.fetchCinemas(
+      cinemas = await _repository.getAllCinemas(
         city: selectedCity == 'Tất cả' ? null : selectedCity,
         brand: selectedBrand == 'Tất cả' ? null : selectedBrand,
       );

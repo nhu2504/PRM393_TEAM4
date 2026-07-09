@@ -8,6 +8,7 @@ class Movie {
   final int durationMinutes; // thời lượng phim (phút)
   final String releaseDate; // ngày khởi chiếu, dạng "dd/MM/yyyy"
   final String description; // mô tả ngắn / thông tin phim
+  final double rating;
 
   Movie({
     required this.id,
@@ -19,11 +20,12 @@ class Movie {
     required this.durationMinutes,
     required this.releaseDate,
     this.description = '',
+    this.rating = 0.0,
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
-      id: json['id'].toString(),
+      id: json['id']?.toString() ?? '',
       title: json['title'] ?? '',
       image: json['image'] ?? '',
       genre: json['genre'] ?? '',
@@ -32,6 +34,7 @@ class Movie {
       durationMinutes: json['durationMinutes'] ?? 0,
       releaseDate: json['releaseDate'] ?? '',
       description: json['description'] ?? '',
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -46,6 +49,7 @@ class Movie {
       'durationMinutes': durationMinutes,
       'releaseDate': releaseDate,
       'description': description,
+      'rating': rating,
     };
   }
 }

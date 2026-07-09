@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/movie_model.dart';
 import '../models/category_model.dart';
-import '../services/api_service.dart';
+import '../repositories/movie_repository.dart';
 import '../views/movie_list_screen.dart';
+import '../views/movie_detail_screen.dart'; // Import màn hình chi tiết
+
 class MovieController extends ChangeNotifier {
+  final MovieRepository _repository = MovieRepository();
   bool isLoading = false;
   String? errorMessage;
 
@@ -24,16 +27,16 @@ class MovieController extends ChangeNotifier {
     fetchMovieData();
   }
 
-  /// Load toàn bộ dữ liệu ban đầu: banner, thể loại, phim
   Future<void> fetchMovieData() async {
     isLoading = true;
     errorMessage = null;
     notifyListeners();
 
     try {
-      final fetchedBanners = await ApiService.fetchBanners();
-      final fetchedCategories = await ApiService.fetchCategories();
-      final movies = await ApiService.fetchMovies(categoryId: selectedCategoryId);
+      // 100% lấy từ SQLite qua Repository
+      final fetchedBanners = await _repository.getBanners();
+      final fetchedCategories = await _repository.getAllCategories();
+      final movies = await _repository.getMoviesByCategory(selectedCategoryId);
 
       banners = fetchedBanners;
       categories = [
@@ -42,14 +45,14 @@ class MovieController extends ChangeNotifier {
       ];
       _applyMovies(movies);
     } catch (e) {
-      errorMessage = 'Không thể tải dữ liệu: $e';
+      errorMessage = 'Không thể tải dữ liệu từ database: $e';
     }
 
     isLoading = false;
     notifyListeners();
   }
 
-  /// Gọi khi người dùng chọn thể loại -> gọi lại API lấy phim theo thể loại
+  /// Gọi khi người dùng chọn thể loại -> lấy từ Repository
   Future<void> onCategorySelected(String categoryId) async {
     if (selectedCategoryId == categoryId) return;
 
@@ -59,7 +62,7 @@ class MovieController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final movies = await ApiService.fetchMovies(categoryId: categoryId);
+      final movies = await _repository.getMoviesByCategory(categoryId);
       _applyMovies(movies);
     } catch (e) {
       errorMessage = 'Không thể tải phim: $e';
@@ -75,6 +78,16 @@ class MovieController extends ChangeNotifier {
     comingSoon = movies.where((m) => m.status == 'coming_soon').toList();
   }
 
+  List<Movie> get filteredNowShowing {
+    if (searchKeyword.isEmpty) return nowShowing;
+    return nowShowing.where((m) => m.title.toLowerCase().contains(searchKeyword.toLowerCase())).toList();
+  }
+
+  List<Movie> get filteredComingSoon {
+    if (searchKeyword.isEmpty) return comingSoon;
+    return comingSoon.where((m) => m.title.toLowerCase().contains(searchKeyword.toLowerCase())).toList();
+  }
+
   void onSearchChanged(String value) {
     searchKeyword = value;
     notifyListeners();
@@ -82,17 +95,26 @@ class MovieController extends ChangeNotifier {
 
   void onMovieTap(Movie movie) {
     debugPrint('Tapped movie: ${movie.title}');
-    // TODO: điều hướng sang trang chi tiết phim (nếu cần)
+    // Điều hướng sang trang chi tiết phim
   }
 
   void onMovieDetailTap(BuildContext context, Movie movie) {
-    // TODO: điều hướng sang trang chi tiết phim
-    debugPrint('Xem chi tiết: ${movie.title}');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieDetailScreen(movie: movie),
+      ),
+    );
   }
 
   void onMovieBookTap(BuildContext context, Movie movie) {
-    // TODO: điều hướng sang trang đặt vé
-    debugPrint('Đặt vé: ${movie.title}');
+    // Tạm thời điều hướng sang lịch chiếu (hoặc chi tiết rồi chọn lịch)
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieDetailScreen(movie: movie),
+      ),
+    );
   }
 
   void onSeeAllNowShowing(BuildContext context) {

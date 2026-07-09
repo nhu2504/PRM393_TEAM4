@@ -1,20 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/cinema_model.dart';
+import '../controllers/cinema_detail_controller.dart';
 
-class CinemaDetailScreen extends StatelessWidget {
-  final CinemaModel cinema;
+class CinemaDetailScreen extends StatefulWidget {
+  final CinemaModel? cinema;
+  final String? cinemaId;
 
-  const CinemaDetailScreen({super.key, required this.cinema});
+  const CinemaDetailScreen({super.key, this.cinema, this.cinemaId});
+
+  @override
+  State<CinemaDetailScreen> createState() => _CinemaDetailScreenState();
+}
+
+class _CinemaDetailScreenState extends State<CinemaDetailScreen> {
+  late final CinemaDetailController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = CinemaDetailController();
+    if (widget.cinema != null) {
+      _controller.setCinema(widget.cinema!);
+    } else if (widget.cinemaId != null) {
+      _controller.loadCinema(widget.cinemaId!);
+    }
+    _controller.addListener(_onChanged);
+  }
+
+  void _onChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onChanged);
+    _controller.dispose();
+    super.dispose();
+  }
 
   /// Ảnh bản đồ tĩnh chụp đúng vị trí rạp (Mapbox Static Images API).
-  /// Token dùng ở đây là token demo công khai của Mapbox, chỉ phù hợp cho
-  /// dev/test. Khi triển khai thật, nên đăng ký token riêng tại mapbox.com
-  /// (free tier khá rộng rãi) và thay vào biến _mapboxAccessToken.
-  static const String _mapboxAccessToken =
-      'TOKEN';
+  static const String _mapboxAccessToken = 'TOKEN';
 
   String get _staticMapImage {
+    final cinema = _controller.cinema;
+    if (cinema == null) return '';
     final lng = cinema.longitude;
     final lat = cinema.latitude;
     return 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/'
@@ -25,24 +55,26 @@ class CinemaDetailScreen extends StatelessWidget {
   }
 
   Future<void> _openGoogleMaps() async {
+    final cinema = _controller.cinema;
+    if (cinema == null) return;
     final uri = Uri.parse(
       'https://www.google.com/maps/search/?api=1&query=${cinema.latitude},${cinema.longitude}',
     );
     try {
-      final launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
-      debugPrint('launched Google Maps: $launched');
+      await launchUrl(uri, mode: LaunchMode.platformDefault);
     } catch (e) {
       debugPrint('Lỗi mở Google Maps: $e');
     }
   }
 
   Future<void> _openAppleMaps() async {
+    final cinema = _controller.cinema;
+    if (cinema == null) return;
     final uri = Uri.parse(
       'https://maps.apple.com/?ll=${cinema.latitude},${cinema.longitude}&q=${Uri.encodeComponent(cinema.name)}',
     );
     try {
-      final launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
-      debugPrint('launched Apple Maps: $launched');
+      await launchUrl(uri, mode: LaunchMode.platformDefault);
     } catch (e) {
       debugPrint('Lỗi mở Apple Maps: $e');
     }
@@ -50,6 +82,18 @@ class CinemaDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final cinema = _controller.cinema;
+    if (cinema == null) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: const Center(child: Text('Không tìm thấy thông tin rạp')),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -93,15 +137,6 @@ class CinemaDetailScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                    );
-                  },
-                  loadingBuilder: (context, child, progress) {
-                    if (progress == null) return child;
-                    return Container(
-                      width: double.infinity,
-                      height: 220,
-                      color: Colors.grey[200],
-                      child: const Center(child: CircularProgressIndicator()),
                     );
                   },
                 ),

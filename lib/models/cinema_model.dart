@@ -31,6 +31,19 @@ class CinemaModel {
       longitude: (json['longitude'] ?? 0).toDouble(),
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'address': address,
+      'image': image,
+      'city': city,
+      'brand': brand,
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+  }
 }
 
 /// Lịch chiếu của 1 phim tại 1 rạp

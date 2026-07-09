@@ -109,8 +109,8 @@ class _MovieScreenState extends State<MovieScreen> {
                 onSeeAll: () => _controller.onSeeAllNowShowing(context),
               ),
               MovieListWidget(
-                movies: _controller.nowShowing,
-                onTap: _controller.onMovieTap,
+                movies: _controller.filteredNowShowing,
+                onTap: (movie) => _controller.onMovieDetailTap(context, movie),
               ),
               const SizedBox(height: 20),
               SectionTitleWidget(
@@ -118,8 +118,8 @@ class _MovieScreenState extends State<MovieScreen> {
                 onSeeAll: () => _controller.onSeeAllComingSoon(context),
               ),
               MovieListWidget(
-                movies: _controller.comingSoon,
-                onTap: _controller.onMovieTap,
+                movies: _controller.filteredComingSoon,
+                onTap: (movie) => _controller.onMovieDetailTap(context, movie),
               ),
               const SizedBox(height: 20),
             ],
