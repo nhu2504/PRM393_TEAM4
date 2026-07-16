@@ -534,29 +534,6 @@ class DatabaseHelper {
       return null;
     }
 
-    Future<UserModel?> getUserById(String id) async {
-      final db = await instance.database;
-      final maps = await db.query(
-        'users',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-      if (maps.isNotEmpty) {
-        return UserModel.fromMap(maps.first);
-      }
-      return null;
-    }
-
-    Future<void> updateUser(UserModel user) async {
-      final db = await instance.database;
-      await db.update(
-        'users',
-        user.toMap(),
-        where: 'id = ?',
-        whereArgs: [user.id],
-      );
-    }
-
 // ----- NOTIFICATION OPERATIONS -----
     Future<void> insertNotification(Map<String, dynamic> notification) async {
       final db = await instance.database;
@@ -707,5 +684,14 @@ class DatabaseHelper {
       }
       return null;
     }
+  }
+  Future<UserModel?> getUserById(String id) async {
+    final db = await instance.database;
+    // ...
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    final db = await instance.database;
+    // ...
   }
 }

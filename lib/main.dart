@@ -24,6 +24,8 @@ import 'screens/rate_experience_screen.dart';
 import 'screens/my_tickets_screen.dart';
 import 'views/main_screen.dart';
 import 'package:flutter/gestures.dart';
+import 'package:provider/provider.dart';
+import 'controllers/account_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +42,12 @@ class PopCornGoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AccountController()),
+
+        ],
+        child: MaterialApp(
       debugShowCheckedModeBanner: false,
    
       // Giữ ScrollBehavior của bạn kia
@@ -63,7 +70,8 @@ class PopCornGoApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/rate': (context) => const RateExperienceScreen(),
-      },
+        }
+      ),
     );
   }
 }
