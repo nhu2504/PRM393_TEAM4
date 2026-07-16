@@ -521,7 +521,6 @@ class DatabaseHelper {
 
 // ----- USER OPERATIONS -----
   Future<void> insertUser(UserModel user) async {
-// ... existing code ...
     Future<UserModel?> getUser(String email, String password) async {
       final db = await instance.database;
       final maps = await db.query(
