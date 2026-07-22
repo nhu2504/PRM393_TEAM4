@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../controllers/account_controller.dart';
 import 'settings_screen.dart';
 import 'notifications_screen.dart';
+import 'edit_profile_screen.dart';
 
 class AccountScreen extends StatefulWidget {
   // Nhận userId từ màn hình Đăng nhập truyền sang
@@ -123,7 +124,10 @@ class _AccountScreenState extends State<AccountScreen> {
             icon: Icons.person_outline,
             title: 'Chỉnh sửa hồ sơ',
             onTap: () {
-              // TODO: Chuyển sang màn hình Edit Profile
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+              );
             },
           ),
           const Divider(height: 1, indent: 56),
