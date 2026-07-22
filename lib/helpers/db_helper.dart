@@ -40,6 +40,12 @@ class DatabaseHelper {
     if (roomCount == 0) {
       await _seedExtraData(db);
     }
+
+    final userCount = Sqflite.firstIntValue(
+        await db.rawQuery('SELECT COUNT(*) FROM users'));
+    if (userCount == 0) {
+      await _seedUsers(db);
+    }
   }
 
   Future<Database> _initDB(String filePath) async {
@@ -71,6 +77,18 @@ class DatabaseHelper {
     for (var banner in banners) {
       await db.insert('banners', banner);
     }
+  }
+
+  Future<void> _seedUsers(Database db) async {
+    final user = {
+      'id': 'u1',
+      'email': 'binknt@gmail.com',
+      'password': '123',
+      'fullName': 'Nguyễn Thị Bính',
+      'phone': '0123456789',
+      'avatar': 'https://i.pravatar.cc/300'
+    };
+    await db.insert('users', user);
   }
 
   Future<void> _seedData(Database db) async {

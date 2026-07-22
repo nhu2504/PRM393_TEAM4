@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_g4/views/onboarding_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/ticket_detail_screen.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'controllers/account_controller.dart';
 import 'controllers/review_controller.dart';
+import 'controllers/theme_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,30 +30,57 @@ class PopCornGoApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AccountController()),
+        ChangeNotifierProvider(create: (_) => ThemeController()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
+      child: Consumer<ThemeController>(
+        builder: (context, themeController, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
 
-        // Giữ ScrollBehavior
-        scrollBehavior: AppScrollBehavior(),
+            // Giữ ScrollBehavior
+            scrollBehavior: AppScrollBehavior(),
 
-        // Giữ Theme
-        theme: ThemeData(
-          primarySwatch: Colors.red,
-          scaffoldBackgroundColor: Colors.grey[100],
-          fontFamily: 'Roboto',
-          useMaterial3: true,
-        ),
+            // Theme cấu hình
+            themeMode: themeController.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primarySwatch: Colors.red,
+              scaffoldBackgroundColor: Colors.grey[100],
+              fontFamily: 'Roboto',
+              useMaterial3: true,
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.white,
+                elevation: 0,
+                centerTitle: true,
+                titleTextStyle: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 18),
+                iconTheme: IconThemeData(color: Colors.black87),
+              ),
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              primarySwatch: Colors.red,
+              fontFamily: 'Roboto',
+              useMaterial3: true,
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Color(0xFF1E1E1E),
+                elevation: 0,
+                centerTitle: true,
+                titleTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                iconTheme: IconThemeData(color: Colors.white),
+              ),
+            ),
 
-        // Giữ Route
-        initialRoute: '/',
+            // Giữ Route
+            initialRoute: '/onboarding',
 
-        routes: {
-          '/': (context) => const MainScreen(),
-          '/ticket_detail': (context) => const TicketDetailScreen(),
-          '/login': (context) => const LoginScreen(),
-          '/register': (context) => const RegisterScreen(),
-          // Đã xóa route '/rate' ở đây
+            routes: {
+              '/': (context) => const MainScreen(),
+              '/onboarding': (context) => const OnboardingScreen(),
+              '/ticket_detail': (context) => const TicketDetailScreen(),
+              '/login': (context) => const LoginScreen(),
+              '/register': (context) => const RegisterScreen(),
+            },
+          );
         },
       ),
     );

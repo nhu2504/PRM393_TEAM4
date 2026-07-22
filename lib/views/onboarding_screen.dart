@@ -50,8 +50,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 alignment: Alignment.topRight,
                 child: TextButton(
                   onPressed: () {
-                    // Nhảy thẳng tới màn hình Đăng nhập
-                    Navigator.pushReplacementNamed(context, '/login');
+                    Navigator.pushReplacementNamed(context, '/');
                   },
                   child: const Text(
                     "Bỏ qua",
@@ -113,8 +112,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                           onPressed: () {
                             if (_currentPage == onboardingData.length - 1) {
-                              // Nếu đang ở trang cuối -> Chuyển sang màn Login
-                              Navigator.pushReplacementNamed(context, '/login');
+                              Navigator.pushReplacementNamed(context, '/');
                             } else {
                               // Chuyển sang trang tiếp theo
                               _pageController.nextPage(
