@@ -1,16 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/star_rating.dart';
+import '../models/movie_model.dart';
+import '../models/review_model.dart';
+import '../controllers/review_controller.dart';
+import '../controllers/account_controller.dart';
 
-class RateExperienceScreen extends StatelessWidget {
-  const RateExperienceScreen({super.key});
+class RateExperienceScreen extends StatefulWidget {
+  /// Phim + rạp cần đánh giá — truyền từ 1 vé.
+  final Movie movie;
+  final String cinemaName;
+
+  const RateExperienceScreen({
+    super.key,
+    required this.movie,
+    required this.cinemaName,
+  });
+
+  @override
+  State<RateExperienceScreen> createState() => _RateExperienceScreenState();
+}
+
+class _RateExperienceScreenState extends State<RateExperienceScreen> {
+  int _movieRating = 0;
+  int _cinemaRating = 0;
+  int _foodRating = 0;
+  String _photoPath = '';
+  final TextEditingController _commentController = TextEditingController();
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
+  String _today() {
+    final n = DateTime.now();
+    return '${n.day.toString().padLeft(2, '0')}/'
+        '${n.month.toString().padLeft(2, '0')}/${n.year}';
+  }
+
+  Future<void> _send() async {
+    // Bắt buộc chấm rạp hoặc đồ ăn để phân loại đúng vào tab "Trải nghiệm".
+    if (_cinemaRating == 0 && _foodRating == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Hãy chấm sao cho Cinema hoặc Drink & Food nhé!')),
+      );
+      return;
+    }
+
+    final userId = context.read<AccountController>().user?.id ?? 'guest';
+
+    final review = ReviewModel(
+      id: 'REV_${DateTime.now().millisecondsSinceEpoch}',
+      userId: userId,
+      movieId: widget.movie.id,
+      ratingMovie: _movieRating.toDouble(),
+      ratingCinema: _cinemaRating.toDouble(),
+      ratingFood: _foodRating.toDouble(),
+      comment: _commentController.text.trim(),
+      imagePath: _photoPath,
+      date: _today(),
+    );
+
+    await ReviewController.instance.addReview(review);
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Cảm ơn bạn đã đánh giá trải nghiệm!')),
+    );
+    Navigator.pop(context, review);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 35),
@@ -23,93 +90,77 @@ class RateExperienceScreen extends StatelessWidget {
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                      onTap: () => Navigator.pop(context),
                       child: const Text(
                         'X',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: AppColors.primaryPink,
-                        ),
+                        style: TextStyle(fontSize: 24, color: AppColors.primaryPink),
                       ),
                     ),
-
                     const SizedBox(width: 35),
-
                     const Text(
                       'Rate Your Experience ⭐',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: AppColors.primaryPink,
-                      ),
+                      style: TextStyle(fontSize: 18, color: AppColors.primaryPink),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 70),
+                const SizedBox(height: 50),
 
-                const Text(
-                  'Movie',
-                  style: TextStyle(
-                    fontSize: 26,
-                    color: AppColors.primaryPink,
-                  ),
+                // Tên rạp cho người dùng biết đang đánh giá buổi xem nào
+                Text(
+                  '${widget.cinemaName}',
+                  style: const TextStyle(fontSize: 15, color: Colors.grey),
                 ),
 
-                const Padding(
-                  padding: EdgeInsets.only(left: 55),
-                  child: StarRating(),
+                const SizedBox(height: 20),
+
+                Text(
+                  widget.movie.title,
+                  style: const TextStyle(fontSize: 26, color: AppColors.primaryPink),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 55),
+                  child: StarRating(onRatingChanged: (v) => _movieRating = v),
                 ),
 
                 const SizedBox(height: 10),
 
                 const Text(
                   'Cinema',
-                  style: TextStyle(
-                    fontSize: 26,
-                    color: AppColors.primaryPink,
-                  ),
+                  style: TextStyle(fontSize: 26, color: AppColors.primaryPink),
                 ),
-
-                const Padding(
-                  padding: EdgeInsets.only(left: 55),
-                  child: StarRating(),
+                Padding(
+                  padding: const EdgeInsets.only(left: 55),
+                  child: StarRating(onRatingChanged: (v) => _cinemaRating = v),
                 ),
 
                 const SizedBox(height: 10),
 
                 const Text(
                   'Drink & Food',
-                  style: TextStyle(
-                    fontSize: 26,
-                    color: AppColors.primaryPink,
-                  ),
+                  style: TextStyle(fontSize: 26, color: AppColors.primaryPink),
                 ),
-
-                const Padding(
-                  padding: EdgeInsets.only(left: 55),
-                  child: StarRating(),
+                Padding(
+                  padding: const EdgeInsets.only(left: 55),
+                  child: StarRating(onRatingChanged: (v) => _foodRating = v),
                 ),
 
                 const SizedBox(height: 10),
 
                 const Text(
                   'Load a photo',
-                  style: TextStyle(
-                    fontSize: 26,
-                    color: AppColors.primaryPink,
-                  ),
+                  style: TextStyle(fontSize: 26, color: AppColors.primaryPink),
                 ),
 
                 const SizedBox(height: 15),
 
                 GestureDetector(
                   onTap: () {
+                    // TODO: dùng image_picker để chọn ảnh thật:
+                    //   final f = await ImagePicker().pickImage(source: ImageSource.gallery);
+                    //   if (f != null) setState(() => _photoPath = f.path);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('upload'),
-                      ),
+                      const SnackBar(content: Text('upload')),
                     );
                   },
                   child: Container(
@@ -118,26 +169,20 @@ class RateExperienceScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: const Color(0xffffedf5),
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(
-                        color: AppColors.lightPink,
-                        width: 1,
-                      ),
+                      border: Border.all(color: AppColors.lightPink, width: 1),
                     ),
-                    child: const Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.add_photo_alternate_outlined,
                           size: 35,
                           color: AppColors.primaryPink,
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
-                          'Tap to upload photo',
-                          style: TextStyle(
-                            color: AppColors.primaryPink,
-                            fontSize: 15,
-                          ),
+                          _photoPath.isEmpty ? 'Tap to upload photo' : 'Đã chọn 1 ảnh',
+                          style: const TextStyle(color: AppColors.primaryPink, fontSize: 15),
                         ),
                       ],
                     ),
@@ -148,15 +193,13 @@ class RateExperienceScreen extends StatelessWidget {
 
                 const Text(
                   'Write comment',
-                  style: TextStyle(
-                    fontSize: 26,
-                    color: AppColors.primaryPink,
-                  ),
+                  style: TextStyle(fontSize: 26, color: AppColors.primaryPink),
                 ),
 
                 const SizedBox(height: 5),
 
                 TextField(
+                  controller: _commentController,
                   maxLines: 5,
                   decoration: InputDecoration(
                     hintText: 'Write a comment...',
@@ -175,7 +218,7 @@ class RateExperienceScreen extends StatelessWidget {
                   child: CustomButton(
                     text: 'Send',
                     width: 130,
-                    onPressed: () {},
+                    onPressed: _send,
                   ),
                 ),
 

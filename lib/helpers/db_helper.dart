@@ -493,16 +493,16 @@ class DatabaseHelper {
     ''');
 
     await db.execute('''
-      CREATE TABLE reviews (
-        id TEXT PRIMARY KEY,
-        userId TEXT,
-        movieId TEXT,
+      CREATE TABLE IF NOT EXISTS reviews (
+        id          TEXT PRIMARY KEY,
+        userId      TEXT,
+        movieId     TEXT,
         ratingMovie REAL,
         ratingCinema REAL,
-        ratingFood REAL,
-        comment TEXT,
-        imagePath TEXT,
-        date TEXT
+        ratingFood  REAL,
+        comment     TEXT,
+        imagePath   TEXT,
+        date        TEXT
       )
     ''');
 
@@ -519,179 +519,210 @@ class DatabaseHelper {
     ''');
   }
 
-// ----- USER OPERATIONS -----
+  // ----- USER OPERATIONS -----
   Future<void> insertUser(UserModel user) async {
-    Future<UserModel?> getUser(String email, String password) async {
-      final db = await instance.database;
-      final maps = await db.query(
-        'users',
-        where: 'email = ? AND password = ?',
-        whereArgs: [email, password],
-      );
-      if (maps.isNotEmpty) {
-        return UserModel.fromMap(maps.first);
-      }
-      return null;
-    }
-
-// ----- NOTIFICATION OPERATIONS -----
-    Future<void> insertNotification(Map<String, dynamic> notification) async {
-      final db = await instance.database;
-      await db.insert('notifications', notification,
-          conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-
-    Future<List<Map<String, dynamic>>> getNotificationsByUser(
-        String userId) async {
-      final db = await instance.database;
-// Sắp xếp ngày mới nhất lên đầu
-      return await db.query('notifications', where: 'userId = ?',
-          whereArgs: [userId],
-          orderBy: 'date DESC');
-    }
-
-    Future<void> markNotificationAsRead(String id) async {
-      final db = await instance.database;
-      await db.update(
-          'notifications', {'isRead': 1}, where: 'id = ?', whereArgs: [id]);
-    }
-
-// ----- TICKET OPERATIONS -----
-    Future<void> insertTicket(Ticket ticket) async {
-      final db = await instance.database;
-      await db.insert('tickets', ticket.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-
-    Future<List<Ticket>> getAllTickets() async {
-      final db = await instance.database;
-      final orderBy = 'bookingDate DESC';
-      final result = await db.query('tickets', orderBy: orderBy);
-
-      return result.map((json) => Ticket.fromMap(json)).toList();
-    }
-
-    Future<void> deleteTicket(String id) async {
-      final db = await instance.database;
-      await db.delete('tickets', where: 'id = ?', whereArgs: [id]);
-    }
-
-    // ----- REVIEW OPERATIONS -----
-    Future<void> insertReview(ReviewModel review) async {
-      final db = await instance.database;
-      await db.insert('reviews', review.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-
-    Future<List<ReviewModel>> getReviewsByMovie(String movieId) async {
-      final db = await instance.database;
-      final result = await db.query(
-          'reviews', where: 'movieId = ?', whereArgs: [movieId]);
-      return result.map((json) => ReviewModel.fromMap(json)).toList();
-    }
-
-    // ----- MASTER DATA OPERATIONS -----
-    Future<List<Movie>> getMoviesByStatus(String status) async {
-      final db = await instance.database;
-      final result = await db.query(
-          'movies', where: 'status = ?', whereArgs: [status]);
-      return result.map((json) => Movie.fromJson(json)).toList();
-    }
-
-    Future<List<Movie>> getMoviesByCategory(String categoryId) async {
-      final db = await instance.database;
-      if (categoryId == 'all') {
-        final result = await db.query('movies');
-        return result.map((json) => Movie.fromJson(json)).toList();
-      }
-      final result = await db.query(
-          'movies', where: 'categoryId = ?', whereArgs: [categoryId]);
-      return result.map((json) => Movie.fromJson(json)).toList();
-    }
-
-    Future<List<CategoryModel>> getAllCategories() async {
-      final db = await instance.database;
-      final result = await db.query('categories');
-      return result.map((json) => CategoryModel.fromJson(json)).toList();
-    }
-
-    Future<List<BannerItem>> getAllBanners() async {
-      final db = await instance.database;
-      final result = await db.query('banners');
-      return result.map((json) =>
-          BannerItem(
-            image: json['image'] as String,
-            title: json['title']?.toString() ?? '',
-          )).toList();
-    }
-
-    // ----- CINEMA & SHOWTIME OPERATIONS -----
-    Future<List<CinemaModel>> getAllCinemas(
-        {String? city, String? brand}) async {
-      final db = await instance.database;
-      String? where;
-      List<dynamic> whereArgs = [];
-
-      if (city != null && city != 'Tất cả') {
-        where = (where == null) ? 'city = ?' : '$where AND city = ?';
-        whereArgs.add(city);
-      }
-      if (brand != null && brand != 'Tất cả') {
-        where = (where == null) ? 'brand = ?' : '$where AND brand = ?';
-        whereArgs.add(brand);
-      }
-
-      final result = await db.query(
-          'cinemas', where: where, whereArgs: whereArgs);
-      return result.map((json) => CinemaModel.fromJson(json)).toList();
-    }
-
-    Future<List<String>> getCinemaBrands() async {
-      final db = await instance.database;
-      final result = await db.rawQuery('SELECT DISTINCT brand FROM cinemas');
-      return result.map((row) => row['brand'] as String).toList();
-    }
-
-    Future<CinemaModel?> getCinemaById(String id) async {
-      final db = await instance.database;
-      final result = await db.query(
-          'cinemas', where: 'id = ?', whereArgs: [id]);
-      if (result.isNotEmpty) {
-        return CinemaModel.fromJson(result.first);
-      }
-      return null;
-    }
-
-    Future<List<RoomModel>> getRoomsByCinemaId(String cinemaId) async {
-      final db = await instance.database;
-      final result = await db.query(
-          'rooms', where: 'cinemaId = ?', whereArgs: [cinemaId]);
-      return result.map((json) => RoomModel.fromMap(json)).toList();
-    }
-
-    Future<List<ShowtimeDbModel>> getShowtimesByRoomId(String roomId) async {
-      final db = await instance.database;
-      final result = await db.query(
-          'showtimes', where: 'roomId = ?', whereArgs: [roomId]);
-      return result.map((json) => ShowtimeDbModel.fromMap(json)).toList();
-    }
-
-    Future<Movie?> getMovieById(String id) async {
-      final db = await instance.database;
-      final result = await db.query('movies', where: 'id = ?', whereArgs: [id]);
-      if (result.isNotEmpty) {
-        return Movie.fromJson(result.first);
-      }
-      return null;
-    }
+    final db = await instance.database;
+    await db.insert(
+      'users',
+      user.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
+
+  Future<UserModel?> getUser(String email, String password) async {
+    final db = await instance.database;
+    final maps = await db.query(
+      'users',
+      where: 'email = ? AND password = ?',
+      whereArgs: [email, password],
+    );
+    if (maps.isNotEmpty) {
+      return UserModel.fromMap(maps.first);
+    }
+    return null;
+  }
+
   Future<UserModel?> getUserById(String id) async {
     final db = await instance.database;
-    // ...
+    final maps = await db.query('users', where: 'id = ?', whereArgs: [id]);
+    if (maps.isNotEmpty) {
+      return UserModel.fromMap(maps.first);
+    }
+    return null;
   }
 
   Future<void> updateUser(UserModel user) async {
     final db = await instance.database;
-    // ...
+    await db.update(
+      'users',
+      user.toMap(),
+      where: 'id = ?',
+      whereArgs: [user.id],
+    );
+  }
+
+  // ----- NOTIFICATION OPERATIONS -----
+  Future<void> insertNotification(Map<String, dynamic> notification) async {
+    final db = await instance.database;
+    await db.insert('notifications', notification,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<Map<String, dynamic>>> getNotificationsByUser(
+      String userId) async {
+    final db = await instance.database;
+    return await db.query('notifications',
+        where: 'userId = ?', whereArgs: [userId], orderBy: 'date DESC');
+  }
+
+  Future<void> markNotificationAsRead(String id) async {
+    final db = await instance.database;
+    await db.update(
+        'notifications', {'isRead': 1}, where: 'id = ?', whereArgs: [id]);
+  }
+
+  // ----- TICKET OPERATIONS -----
+  Future<void> insertTicket(Ticket ticket) async {
+    final db = await instance.database;
+    await db.insert('tickets', ticket.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<Ticket>> getAllTickets() async {
+    final db = await instance.database;
+    final orderBy = 'bookingDate DESC';
+    final result = await db.query('tickets', orderBy: orderBy);
+
+    return result.map((json) => Ticket.fromMap(json)).toList();
+  }
+
+  Future<void> deleteTicket(String id) async {
+    final db = await instance.database;
+    await db.delete('tickets', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // ----- REVIEW OPERATIONS -----
+  Future<void> insertReview(ReviewModel review) async {
+    final db = await instance.database;
+    await db.insert(
+      'reviews',
+      review.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<ReviewModel>> getAllReviews() async {
+    final db = await instance.database;
+    final rows = await db.query('reviews', orderBy: 'date DESC');
+    return rows.map((e) => ReviewModel.fromMap(e)).toList();
+  }
+
+  Future<List<ReviewModel>> getReviewsByMovie(String movieId) async {
+    final db = await instance.database;
+    final result = await db.query(
+        'reviews', where: 'movieId = ?', whereArgs: [movieId]);
+    return result.map((json) => ReviewModel.fromMap(json)).toList();
+  }
+
+  Future<void> deleteReview(String id) async {
+    final db = await instance.database;
+    await db.delete('reviews', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // ----- MASTER DATA OPERATIONS -----
+  Future<List<Movie>> getMoviesByStatus(String status) async {
+    final db = await instance.database;
+    final result =
+        await db.query('movies', where: 'status = ?', whereArgs: [status]);
+    return result.map((json) => Movie.fromJson(json)).toList();
+  }
+
+  Future<List<Movie>> getMoviesByCategory(String categoryId) async {
+    final db = await instance.database;
+    if (categoryId == 'all') {
+      final result = await db.query('movies');
+      return result.map((json) => Movie.fromJson(json)).toList();
+    }
+    final result = await db.query('movies',
+        where: 'categoryId = ?', whereArgs: [categoryId]);
+    return result.map((json) => Movie.fromJson(json)).toList();
+  }
+
+  Future<List<CategoryModel>> getAllCategories() async {
+    final db = await instance.database;
+    final result = await db.query('categories');
+    return result.map((json) => CategoryModel.fromJson(json)).toList();
+  }
+
+  Future<List<BannerItem>> getAllBanners() async {
+    final db = await instance.database;
+    final result = await db.query('banners');
+    return result
+        .map((json) => BannerItem(
+              image: json['image'] as String,
+              title: json['title']?.toString() ?? '',
+            ))
+        .toList();
+  }
+
+  // ----- CINEMA & SHOWTIME OPERATIONS -----
+  Future<List<CinemaModel>> getAllCinemas(
+      {String? city, String? brand}) async {
+    final db = await instance.database;
+    String? where;
+    List<dynamic> whereArgs = [];
+
+    if (city != null && city != 'Tất cả') {
+      where = (where == null) ? 'city = ?' : '$where AND city = ?';
+      whereArgs.add(city);
+    }
+    if (brand != null && brand != 'Tất cả') {
+      where = (where == null) ? 'brand = ?' : '$where AND brand = ?';
+      whereArgs.add(brand);
+    }
+
+    final result =
+        await db.query('cinemas', where: where, whereArgs: whereArgs);
+    return result.map((json) => CinemaModel.fromJson(json)).toList();
+  }
+
+  Future<List<String>> getCinemaBrands() async {
+    final db = await instance.database;
+    final result = await db.rawQuery('SELECT DISTINCT brand FROM cinemas');
+    return result.map((row) => row['brand'] as String).toList();
+  }
+
+  Future<CinemaModel?> getCinemaById(String id) async {
+    final db = await instance.database;
+    final result =
+        await db.query('cinemas', where: 'id = ?', whereArgs: [id]);
+    if (result.isNotEmpty) {
+      return CinemaModel.fromJson(result.first);
+    }
+    return null;
+  }
+
+  Future<List<RoomModel>> getRoomsByCinemaId(String cinemaId) async {
+    final db = await instance.database;
+    final result =
+        await db.query('rooms', where: 'cinemaId = ?', whereArgs: [cinemaId]);
+    return result.map((json) => RoomModel.fromMap(json)).toList();
+  }
+
+  Future<List<ShowtimeDbModel>> getShowtimesByRoomId(String roomId) async {
+    final db = await instance.database;
+    final result =
+        await db.query('showtimes', where: 'roomId = ?', whereArgs: [roomId]);
+    return result.map((json) => ShowtimeDbModel.fromMap(json)).toList();
+  }
+
+  Future<Movie?> getMovieById(String id) async {
+    final db = await instance.database;
+    final result =
+        await db.query('movies', where: 'id = ?', whereArgs: [id]);
+    if (result.isNotEmpty) {
+      return Movie.fromJson(result.first);
+    }
+    return null;
   }
 }
