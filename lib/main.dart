@@ -1,36 +1,19 @@
-// import 'package:flutter/material.dart';
-// import 'screens/login_screen.dart';
-//
-// void main() {
-//   runApp(const PopCornGoApp());
-// }
-//
-// class PopCornGoApp extends StatelessWidget {
-//   const PopCornGoApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: LoginScreen(),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/ticket_detail_screen.dart';
-import 'screens/rate_experience_screen.dart';
 import 'screens/my_tickets_screen.dart';
 import 'views/main_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'controllers/account_controller.dart';
+import 'controllers/review_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await MyTicketsScreen.globalTicketController.fetchTickets();
+    await ReviewController.instance.fetchReviews(); // Thêm nạp reviews khi khởi động
   } catch (e) {
     debugPrint('Lỗi khởi tạo Database: $e');
   }
@@ -43,34 +26,33 @@ class PopCornGoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => AccountController()),
+      providers: [
+        ChangeNotifierProvider(create: (_) => AccountController()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
 
-        ],
-        child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-   
-      // Giữ ScrollBehavior của bạn kia
-      scrollBehavior: AppScrollBehavior(),
+        // Giữ ScrollBehavior
+        scrollBehavior: AppScrollBehavior(),
 
-      // Giữ Theme của bạn kia
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        scaffoldBackgroundColor: Colors.grey[100],
-        fontFamily: 'Roboto',
-        useMaterial3: true,
-      ),
+        // Giữ Theme
+        theme: ThemeData(
+          primarySwatch: Colors.red,
+          scaffoldBackgroundColor: Colors.grey[100],
+          fontFamily: 'Roboto',
+          useMaterial3: true,
+        ),
 
-      // Giữ Route của bạn
-      initialRoute: '/',
+        // Giữ Route
+        initialRoute: '/',
 
-      routes: {
-        '/': (context) => const MainScreen(),
-        '/ticket_detail': (context) => const TicketDetailScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/rate': (context) => const RateExperienceScreen(),
-        }
+        routes: {
+          '/': (context) => const MainScreen(),
+          '/ticket_detail': (context) => const TicketDetailScreen(),
+          '/login': (context) => const LoginScreen(),
+          '/register': (context) => const RegisterScreen(),
+          // Đã xóa route '/rate' ở đây
+        },
       ),
     );
   }
